@@ -1,2 +1,2 @@
 [%bs.raw {|require("./tailwind.css")|}];
-ReactDOMRe.renderToElementWithId(<Grid />, "root");
+ReactDOMRe.renderToElementWithId(<Logic />, "root");
