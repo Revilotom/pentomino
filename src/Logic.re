@@ -1,6 +1,7 @@
 [@react.component]
 let make = () => {
   let (selected, setSelectedHandler) = React.useState(() => None);
+  let grid = Array.create(64, None);
 
   Js.log(selected);
 
