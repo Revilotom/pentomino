@@ -6,5 +6,7 @@ let make = () => {
       style={ReactDOM.Style.make(~width="45%", ())}>
       {Array.make(64, None) |> Array.map(_ => <Cell />) |> React.array}
     </div>
+    <F />
+    <I/>
   </div>;
 };
