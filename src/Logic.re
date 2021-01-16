@@ -1,8 +1,16 @@
 [@react.component]
 let make = () => {
-  let (selected, setSelected) = React.useState(() => None);
+  let (selected, setSelectedHandler) = React.useState(() => None);
 
   Js.log(selected);
 
-  <div> <Grid /> <Shapes setSelected /> </div>;
+  <div className="flex">
+    <Grid />
+    <div className="flex flex-wrap">
+      <Shapes
+        selected
+        setSelected={(num: int) => setSelectedHandler(_ => Some(num))}
+      />
+    </div>
+  </div>;
 };

@@ -6,6 +6,6 @@ let make = () =>
     height="80"
     viewBox="0 0 160 80"
     fill="none">
-    <rect x="80" width="40" height="40" fill="#C4C4C4" />
-    <rect y="40" width="160" height="40" fill="#C4C4C4" />
+    <rect x="80" width="40" height="40" className="fill-current" />
+    <rect y="40" width="160" height="40" className="fill-current" />
   </svg>;
