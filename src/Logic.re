@@ -31,6 +31,9 @@ let make = () => {
       |> Array.map(x => x.id === id ? {...x, cell: Some(cell)} : x)
     );
 
+  let setSelected = (maybeId: option(shapeId)) =>
+    setSelectedHandler(_ => maybeId);
+
   <div className="flex">
     <Grid
       selectedShape={
@@ -41,17 +44,11 @@ let make = () => {
       placedShapes={
         shapeArray->Belt.Array.keep(shape => shape.cell->Belt.Option.isSome)
       }
-      deselect={_ => setSelectedHandler(_ => None)}
+      setSelected
       placeShape
     />
     <div className="flex flex-wrap">
-      <ShapeSelector
-        selected
-        setSelected={(maybeId: option(shapeId)) =>
-          setSelectedHandler(_ => maybeId)
-        }
-        shapeArray
-      />
+      <ShapeSelector selected setSelected shapeArray />
     </div>
   </div>;
 };

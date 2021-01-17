@@ -12,7 +12,7 @@ let make =
       ~selectedShape: option(shape),
       ~placedShapes: array(shape),
       ~placeShape,
-      ~deselect,
+      ~setSelected,
     ) => {
   let (mousePos, setMousePos) = React.useState(() => None);
 
@@ -57,7 +57,7 @@ let make =
                     mousePos->Belt.Option.map(cell =>
                       if (isValid) {
                         placeShape(shape.id, cell);
-                        deselect();
+                        setSelected(None);
                       }
                     )
                   )
