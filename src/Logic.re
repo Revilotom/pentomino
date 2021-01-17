@@ -41,6 +41,7 @@ let make = () => {
       placedShapes={
         shapeArray->Belt.Array.keep(shape => shape.cell->Belt.Option.isSome)
       }
+      deselect={_ => setSelectedHandler(_ => None)}
       placeShape
     />
     <div className="flex flex-wrap">
