@@ -20,7 +20,17 @@ let init: array(shape) =
      );
 
 let document = Webapi.Dom.Document.asEventTarget(Webapi.Dom.document);
-let handleKey = _ => Js.log("Key pressed");
+
+let keyToString = key =>
+  switch (key) {
+  | "s" => 180
+  | "w" => 180
+  | "d" => 90
+  | "a" => (-90)
+  | _ => 0
+  };
+
+let handleKey = e => Js.log(Dom.keyboardEvent.key(e));
 
 [@react.component]
 let make = () => {
