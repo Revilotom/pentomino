@@ -25,10 +25,9 @@ let make = () => {
     React.useState(() => None);
   let (shapeArray, setShapeArray) = React.useState(() => init);
 
-  let placeShape = (id: shapeId, cell: int) =>
+  let placeShape = (id: option(shapeId), cell: option(int)) =>
     setShapeArray(_ =>
-      shapeArray
-      |> Array.map(x => x.id === id ? {...x, cell: Some(cell)} : x)
+      shapeArray |> Array.map(x => Some(x.id) === id ? {...x, cell} : x)
     );
 
   let setSelected = (maybeId: option(shapeId)) =>

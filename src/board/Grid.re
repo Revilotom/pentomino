@@ -79,15 +79,14 @@ let make =
                 switch (selectedShape) {
                 | Some(shape) =>
                   if (isValid) {
-                    placeShape(shape.id, i);
+                    placeShape(Some(shape.id), Some(i));
                     setSelected(None);
                   }
                 | None =>
-                  setSelected(
-                    hoveredPlacedCell->Belt.Option.flatMap(placedCell =>
-                      placedCell.shapeId
-                    ),
-                  )
+                  hoveredPlacedCell->Belt.Option.forEach(placedCell => {
+                    placeShape(placedCell.shapeId, None);
+                    setSelected(placedCell.shapeId);
+                  })
                 }
               }
               index={Some(i)}
