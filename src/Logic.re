@@ -67,6 +67,7 @@ let make = () => {
 
   <div className="flex">
     <Grid
+      orientation
       selectedShape={
         selected->Belt.Option.flatMap(id =>
           shapeArray->Belt.Array.getBy(shape => shape.id === id)

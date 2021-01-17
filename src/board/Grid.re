@@ -13,21 +13,22 @@ let make =
       ~placedShapes: array(shape),
       ~placeShape,
       ~setSelected,
+      ~orientation: int,
     ) => {
   let (mousePos, setMousePos) = React.useState(() => None);
 
   let highlightedIndexes =
-    getRelativeIndexes(mousePos, toCoords(selectedShape));
+    getRelativeIndexes(mousePos, toCoords(selectedShape, orientation));
 
   let placedIndexes =
     placedShapes->Belt.Array.map(placedShape =>
-      getRelativeIndexes(placedShape.cell, toCoords(Some(placedShape)))
+      getRelativeIndexes(placedShape.cell, toCoords(Some(placedShape), 0))
     );
 
   let placedCells: array(placedCells) =
     placedShapes
     ->Belt.Array.map(placedShape =>
-        getRelativeIndexes(placedShape.cell, toCoords(Some(placedShape)))
+        getRelativeIndexes(placedShape.cell, toCoords(Some(placedShape), 0))
         ->Belt.Array.map(cell => {cell, shapeId: Some(placedShape.id)})
       )
     ->Belt.Array.reduce([||], (acc, curr) => Belt.Array.concat(acc, curr));
@@ -70,7 +71,7 @@ let make =
                   : highlightedIndexes->Belt.Array.some(x => x == i)
                       ? "bg-" ++ (isValid ? "blue" : "red") ++ "-200"
                       : "bg-"
-                        ++ getPlacedShapeAtCell(i, placedShapes)
+                        ++ getPlacedShapeAtCell(i, placedShapes, 0)
                            ->Belt.Option.map(x => colorToString(x.color))
                            ->Belt.Option.getWithDefault("")
                         ++ "-500"

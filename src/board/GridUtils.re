@@ -1,24 +1,33 @@
 open ShapeSelector;
 
-let toCoords = selectedShape =>
-  switch (selectedShape) {
-  | Some(selectedShape) =>
-    switch (selectedShape.id) {
-    | F => [|(1, 0), (0, 1), (1, 1), (2, 1), (0, 2)|]
-    | I => [|(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)|]
-    | L => [|(0, 0), (1, 0), (1, 1), (1, 2), (1, 3)|]
-    | N => [|(0, 0), (0, 1), (1, 1), (1, 2), (1, 3)|]
-    | P => [|(0, 0), (1, 0), (2, 0), (0, 1), (1, 1)|]
-    | V => [|(0, 2), (1, 2), (2, 2), (2, 0), (2, 1)|]
-    | W => [|(0, 2), (1, 2), (1, 1), (2, 0), (2, 1)|]
-    | X => [|(0, 1), (1, 0), (1, 1), (1, 2), (2, 1)|]
-    | Y => [|(0, 0), (0, 1), (0, 2), (0, 3), ((-1), 2)|]
-    | T => [|(0, 0), (0, 1), (0, 2), (1, 1), (2, 1)|]
-    | U => [|(0, 0), (1, 0), (1, 1), (1, 2), (0, 2)|]
-    | Z => [|(0, 0), (0, 1), (1, 1), (2, 1), (2, 2)|]
-    }
-  | None => [||]
+let rec applyRotation = ((x, y), rotation: int) =>
+  switch (rotation) {
+  | 0 => (x, y)
+  | _ => applyRotation((y, - x), rotation - 90)
   };
+
+let toCoords = (selectedShape, orientation) =>
+  (
+    switch (selectedShape) {
+    | Some(selectedShape) =>
+      switch (selectedShape.id) {
+      | F => [|(1, 0), (0, 1), (1, 1), (2, 1), (0, 2)|]
+      | I => [|(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)|]
+      | L => [|(0, 0), (1, 0), (1, 1), (1, 2), (1, 3)|]
+      | N => [|(0, 0), (0, 1), (1, 1), (1, 2), (1, 3)|]
+      | P => [|(0, 0), (1, 0), (2, 0), (0, 1), (1, 1)|]
+      | V => [|(0, 2), (1, 2), (2, 2), (2, 0), (2, 1)|]
+      | W => [|(0, 2), (1, 2), (1, 1), (2, 0), (2, 1)|]
+      | X => [|(0, 1), (1, 0), (1, 1), (1, 2), (2, 1)|]
+      | Y => [|(0, 0), (0, 1), (0, 2), (0, 3), ((-1), 2)|]
+      | T => [|(0, 0), (0, 1), (0, 2), (1, 1), (2, 1)|]
+      | U => [|(0, 0), (1, 0), (1, 1), (1, 2), (0, 2)|]
+      | Z => [|(0, 0), (0, 1), (1, 1), (2, 1), (2, 2)|]
+      }
+    | None => [||]
+    }
+  )
+  |> Array.map(coord => applyRotation(coord, orientation));
 
 let indexToCoords = (index: int) => (index / 8, index mod 8);
 let coordsToindex = ((x: int, y: int)) => x * 8 + y;
@@ -53,10 +62,14 @@ let getRelativeIndexes =
     )
   ->Belt.Option.getWithDefault([||]);
 
-let getPlacedShapeAtCell = (cell: int, placedShapes: array(shape)) => {
+let getPlacedShapeAtCell =
+    (cell: int, placedShapes: array(shape), orientation: int) => {
   placedShapes
   ->Belt.Array.keep(placedShape =>
-      getRelativeIndexes(placedShape.cell, toCoords(Some(placedShape)))
+      getRelativeIndexes(
+        placedShape.cell,
+        toCoords(Some(placedShape), orientation),
+      )
       ->Belt.Array.some(index => index === cell)
     )
   ->Belt.Array.get(0);
