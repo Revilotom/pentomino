@@ -47,7 +47,9 @@ let make = () => {
     <div className="flex flex-wrap">
       <ShapeSelector
         selected
-        setSelected={(id: shapeId) => setSelectedHandler(_ => Some(id))}
+        setSelected={(maybeId: option(shapeId)) =>
+          setSelectedHandler(_ => maybeId)
+        }
         shapeArray
       />
     </div>

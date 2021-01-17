@@ -55,7 +55,10 @@ let make = (~setSelected, ~selected, ~shapeArray: array(shape)) => {
               "p-5 "
               ++ (selected === Some(x.id) ? "text-red-600" : "text-blue-500 ")
             }
-            onClick={_ => setSelected(x.id)}>
+            onClick={_ =>
+              selected === Some(x.id)
+                ? setSelected(None) : setSelected(Some(x.id))
+            }>
             {x.component}
           </div>
         )
