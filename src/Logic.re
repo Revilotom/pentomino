@@ -1,8 +1,30 @@
 open ShapeSelector;
+// let colors: array(color) = [
+//   Red,
+//   Green,
+//   Yellow,
+//   Blue,
+//   Orange,
+//   Indigo,
+//   Pink,
+//   Purple,
+// ];
 
 let init: array(shape) =
-  [|<F />, <I />, <L />, <N />, <P />, <V />, <W />, <X />, <Y />|]
-  |> Array.mapi((i, x) => {component: x, id: i, orientation: 0, cell: None});
+  [|
+    (<F />, Pink),
+    (<I />, Red),
+    (<L />, Blue),
+    (<N />, Green),
+    (<P />, Orange),
+    (<V />, Indigo),
+    (<W />, Purple),
+    (<X />, Yellow),
+    (<Y />, Teal),
+  |]
+  |> Array.mapi((i, (component, color)) =>
+       {component, id: i, orientation: 0, cell: None, color}
+     );
 
 [@react.component]
 let make = () => {
@@ -17,8 +39,8 @@ let make = () => {
 
   let grid = Array.make(64, None);
 
-  Js.log(selected);
-  Js.log(shapeArray);
+  // Js.log(selected);
+  // Js.log(shapeArray);
 
   <div className="flex">
     <Grid
