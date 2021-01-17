@@ -22,13 +22,19 @@ let make =
 
   let placedIndexes =
     placedShapes->Belt.Array.map(placedShape =>
-      getRelativeIndexes(placedShape.cell, toCoords(Some(placedShape), 0))
+      getRelativeIndexes(
+        placedShape.cell,
+        toCoords(Some(placedShape), placedShape.orientation),
+      )
     );
 
   let placedCells: array(placedCells) =
     placedShapes
     ->Belt.Array.map(placedShape =>
-        getRelativeIndexes(placedShape.cell, toCoords(Some(placedShape), 0))
+        getRelativeIndexes(
+          placedShape.cell,
+          toCoords(Some(placedShape), placedShape.orientation),
+        )
         ->Belt.Array.map(cell => {cell, shapeId: Some(placedShape.id)})
       )
     ->Belt.Array.reduce([||], (acc, curr) => Belt.Array.concat(acc, curr));
@@ -71,7 +77,7 @@ let make =
                   : highlightedIndexes->Belt.Array.some(x => x == i)
                       ? "bg-" ++ (isValid ? "blue" : "red") ++ "-200"
                       : "bg-"
-                        ++ getPlacedShapeAtCell(i, placedShapes, 0)
+                        ++ getPlacedShapeAtCell(i, placedShapes)
                            ->Belt.Option.map(x => colorToString(x.color))
                            ->Belt.Option.getWithDefault("")
                         ++ "-500"

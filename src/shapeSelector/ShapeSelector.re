@@ -41,6 +41,7 @@ type shape = {
   component: React.element,
   cell: option(int),
   color,
+  orientation: int,
 };
 
 [@react.component]

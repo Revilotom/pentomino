@@ -3,7 +3,10 @@ open ShapeSelector;
 let rec applyRotation = ((x, y), rotation: int) =>
   switch (rotation) {
   | 0 => (x, y)
-  | _ => applyRotation((y, - x), rotation - 90)
+  | degress =>
+    degress > 0
+      ? applyRotation((y, - x), rotation - 90)
+      : applyRotation((- y, x), rotation + 90)
   };
 
 let toCoords = (selectedShape, orientation) =>
@@ -62,13 +65,12 @@ let getRelativeIndexes =
     )
   ->Belt.Option.getWithDefault([||]);
 
-let getPlacedShapeAtCell =
-    (cell: int, placedShapes: array(shape), orientation: int) => {
+let getPlacedShapeAtCell = (cell: int, placedShapes: array(shape)) => {
   placedShapes
   ->Belt.Array.keep(placedShape =>
       getRelativeIndexes(
         placedShape.cell,
-        toCoords(Some(placedShape), orientation),
+        toCoords(Some(placedShape), placedShape.orientation),
       )
       ->Belt.Array.some(index => index === cell)
     )

@@ -16,7 +16,7 @@ let init: array(shape) =
     (<T />, Blue, T),
   |]
   |> Array.map(((component, color, id)) =>
-       {component, id, cell: None, color}
+       {component, id, orientation: 0, cell: None, color}
      );
 
 let keyToOrientation = key =>
@@ -44,7 +44,8 @@ let make = () => {
 
   let placeShape = (id: option(shapeId), cell: option(int)) =>
     setShapeArray(_ =>
-      shapeArray |> Array.map(x => Some(x.id) === id ? {...x, cell} : x)
+      shapeArray
+      |> Array.map(x => Some(x.id) === id ? {...x, cell, orientation} : x)
     );
 
   let setSelected = (maybeId: option(shapeId)) =>
