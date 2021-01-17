@@ -53,8 +53,8 @@ let getRelativeIndexes =
 
 let getPlacedShapeAtCell = (cell: int, placedShapes: array(shape)) => {
   placedShapes
-  ->Belt.Array.keep(x =>
-      getRelativeIndexes(x.cell, toCoords(Some(x)))
+  ->Belt.Array.keep(placedShape =>
+      getRelativeIndexes(placedShape.cell, toCoords(Some(placedShape)))
       ->Belt.Array.some(index => index === cell)
     )
   ->Belt.Array.get(0);
