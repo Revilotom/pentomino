@@ -10,17 +10,15 @@ let make =
     ) => {
   let (mousePos, setMousePos) = React.useState(() => None);
 
-  let coords = toCoords(selectedShape);
+  let relativeIndexes =
+    getRelativeIndexes(mousePos, toCoords(selectedShape));
 
-  let relativeIndexes: array(int) =
-    mousePos
-    ->Belt.Option.map(pos =>
-        coords
-        |> Array.map(x => addCoords(x, indexToCoords(pos)))
-        |> adjustCoords
-        |> Array.map(coordsToindex)
-      )
-    ->Belt.Option.getWithDefault([||]);
+  let placedIndexes =
+    placedShapes->Belt.Array.map(x =>
+      getRelativeIndexes(x.cell, toCoords(Some(x))) |> Array.to_list
+    )
+    |> Array.to_list
+    |> List.flatten;
 
   <div className="flex justify-items-auto justify-center">
     <div
@@ -29,6 +27,12 @@ let make =
       {Array.make(64, None)
        |> Array.mapi((i, _) =>
             <Cell
+              className={
+                relativeIndexes->Belt.Array.some(x => x == i)
+                  ? "bg-blue-200"
+                  : placedIndexes->Belt.List.some(x => x == i)
+                      ? "bg-red-500" : ""
+              }
               onClick={_ =>
                 selectedShape
                 ->Belt.Option.flatMap(shape =>
@@ -38,7 +42,6 @@ let make =
                   )
                 ->Belt.Option.getWithDefault()
               }
-              highlight={relativeIndexes->Belt.Array.some(x => x == i)}
               index={Some(i)}
               setPos={x => setMousePos(_ => x)}
               key={string_of_int(i)}

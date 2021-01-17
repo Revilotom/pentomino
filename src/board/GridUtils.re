@@ -40,4 +40,13 @@ let adjustCoords = (coords: array((int, int))) => {
   coords->Belt.Array.map(((x, y)) => (x + xDiff, y + yDiff));
 };
 
-// Belt.Array.re
+let getRelativeIndexes =
+    (relativeTo: option(int), coords: array((int, int))) =>
+  relativeTo
+  ->Belt.Option.map(pos =>
+      coords
+      |> Array.map(x => addCoords(x, indexToCoords(pos)))
+      |> adjustCoords
+      |> Array.map(coordsToindex)
+    )
+  ->Belt.Option.getWithDefault([||]);
