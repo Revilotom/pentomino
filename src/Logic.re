@@ -19,8 +19,6 @@ let init: array(shape) =
        {component, id, orientation: 0, cell: None, color}
      );
 
-let document = Webapi.Dom.Document.asEventTarget(Webapi.Dom.document);
-
 let keyToString = key =>
   switch (key) {
   | "s" => 180
@@ -30,7 +28,7 @@ let keyToString = key =>
   | _ => 0
   };
 
-let handleKey = e => Js.log(Dom.keyboardEvent.key(e));
+let handleKey = e => Js.log(Webapi.Dom.KeyboardEvent.key(e));
 
 [@react.component]
 let make = () => {
@@ -47,14 +45,16 @@ let make = () => {
     setSelectedHandler(_ => maybeId);
 
   React.useEffect0(() => {
-    Webapi.Dom.EventTarget.addEventListener("keypress", handleKey, document);
-    /* clean up the subscription */
+    Webapi.Dom.Document.addKeyDownEventListener(
+      handleKey,
+      Webapi.Dom.document,
+    );
+    // /* clean up the subscription */
     Some(
       () =>
-        Webapi.Dom.EventTarget.removeEventListener(
-          "keypress",
+        Webapi.Dom.Document.removeKeyDownEventListener(
           handleKey,
-          document,
+          Webapi.Dom.document,
         ),
     );
   });
