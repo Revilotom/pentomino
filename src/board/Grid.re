@@ -18,10 +18,6 @@ let toCoords = selectedShape =>
   | None => [||]
   };
 
-let isValid = coords =>
-  coords->Belt.Array.keep(((x, y)) => x >= 0 && x <= 7 && y >= 0 && y <= 7)
-  |> Array.length === Array.length(coords);
-
 let indexToCoords = (index: int) => (index / 8, index mod 8);
 let coordsToindex = ((x: int, y: int)) => x * 8 + y;
 
@@ -30,35 +26,45 @@ let addCoords = ((x1: int, y1: int), (x2: int, y2: int)) => (
   y1 + y2,
 );
 
+let adjustCoords = (coords: array((int, int))) => {
+  let max = (a, b) => a > b ? a : b;
+  let min = (a, b) => a < b ? a : b;
+  let maxX = coords->Belt.Array.reduce(-1, (acc, (x, y)) => max(x, acc));
+  let minX = coords->Belt.Array.reduce(8, (acc, (x, y)) => min(x, acc));
+  let maxY = coords->Belt.Array.reduce(-1, (acc, (x, y)) => max(y, acc));
+  let minY = coords->Belt.Array.reduce(8, (acc, (x, y)) => min(y, acc));
+
+  Js.log(maxY);
+  Js.log(maxY > 7 ? maxY - 7 : 0);
+
+  let yDiff = minY < 0 ? abs(minY) : maxY > 7 ? - (maxY - 7) : 0;
+  let xDiff = minX < 0 ? abs(minX) : maxX > 7 ? - (maxX - 7) : 0;
+
+  coords->Belt.Array.map(((x, y)) => (x + xDiff, y + yDiff));
+};
+
+// Belt.Array.re
+
 [@react.component]
 let make = (~selectedShape: option(shape)) => {
   let (mousePos, setMousePos) = React.useState(() => None);
 
+  // let prev = usePrevious(mousePos);
+
   let coords = toCoords(selectedShape);
-  // Js.log(mousePos);
-  // Js.log(coords);
-  // Js.log(
-  //   mousePos
-  //   ->Belt.Option.map(pos =>
-  //       coords |> Array.map(x => addCoords(x, indexToCoords(pos)))
-  //     )
-  //   ->Belt.Option.getWithDefault([||]),
-  // );
-  // Js.log(mousePos->Belt.Option.map(indexToCoords));
-  // Js.log(
-  //   mousePos->Belt.Option.map(indexToCoords)->Belt.Option.map(coordsToindex),
-  // );
 
   let relativeIndexes: array(int) =
     mousePos
     ->Belt.Option.map(pos =>
         coords
         |> Array.map(x => addCoords(x, indexToCoords(pos)))
+        |> adjustCoords
         |> Array.map(coordsToindex)
       )
     ->Belt.Option.getWithDefault([||]);
 
-  Js.log(relativeIndexes);
+  // Js.log(mousePos);
+  // Js.log(prev);
 
   <div className="flex justify-items-auto justify-center">
     <div
