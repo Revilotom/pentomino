@@ -7,12 +7,12 @@ let shapeArray: array(shape) =
 [@react.component]
 let make = () => {
   let (selected, setSelectedHandler) = React.useState(() => None);
-  let grid = Array.create(64, None);
+  let grid = Array.make(64, None);
 
   Js.log(selected);
 
   <div className="flex">
-    <Grid />
+    <Grid selectedShape={selected->Belt.Option.map(i => shapeArray[i])} />
     <div className="flex flex-wrap">
       <ShapeSelector
         selected
