@@ -2,6 +2,7 @@ type shape = {
   id: int,
   orientation: int,
   component: React.element,
+  cell: option(int),
 };
 
 [@react.component]

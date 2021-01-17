@@ -1,6 +1,7 @@
 [@react.component]
-let make = (~highlight, ~index, ~setPos, ~w=20, ~h=20) =>
+let make = (~highlight, ~index, ~setPos, ~onClick, ~w=20, ~h=20) =>
   <div
+    onClick
     onMouseLeave={_ => setPos(None)}
     onMouseEnter={_ => setPos(index)}
     className={
