@@ -1,3 +1,17 @@
+type shapeId =
+  | F
+  | I
+  | L
+  | N
+  | P
+  | T
+  | U
+  | V
+  | W
+  | X
+  | Y
+  | Z;
+
 type color =
   | Red
   | Indigo
@@ -23,7 +37,7 @@ let colorToString = (c: color) =>
   };
 
 type shape = {
-  id: int,
+  id: shapeId,
   orientation: int,
   component: React.element,
   cell: option(int),
@@ -34,14 +48,12 @@ type shape = {
 let make = (~setSelected, ~selected, ~shapeArray: array(shape)) => {
   <>
     {shapeArray
-     |> Array.map(x =>
+     |> Array.mapi((i, x) =>
           <div
-            key={string_of_int(x.id)}
+            key={string_of_int(i)}
             className={
               "p-5 "
-              ++ (
-                selected === Some(x.id) ? "text-red-600" : "text-blue-500 bg-"
-              )
+              ++ (selected === Some(x.id) ? "text-red-600" : "text-blue-500 ")
             }
             onClick={_ => setSelected(x.id)}>
             {x.component}

@@ -1,37 +1,31 @@
 open ShapeSelector;
-// let colors: array(color) = [
-//   Red,
-//   Green,
-//   Yellow,
-//   Blue,
-//   Orange,
-//   Indigo,
-//   Pink,
-//   Purple,
-// ];
 
 let init: array(shape) =
   [|
-    (<F />, Pink),
-    (<I />, Red),
-    (<L />, Blue),
-    (<N />, Green),
-    (<P />, Orange),
-    (<V />, Indigo),
-    (<W />, Purple),
-    (<X />, Yellow),
-    (<Y />, Teal),
+    (<F />, Pink, F),
+    (<I />, Red, I),
+    (<L />, Blue, L),
+    (<N />, Green, N),
+    (<P />, Orange, P),
+    (<V />, Indigo, V),
+    (<W />, Purple, W),
+    (<X />, Yellow, X),
+    (<Y />, Teal, Y),
+    (<Z />, Yellow, Z),
+    (<U />, Indigo, U),
+    (<T />, Blue, T),
   |]
-  |> Array.mapi((i, (component, color)) =>
-       {component, id: i, orientation: 0, cell: None, color}
+  |> Array.map(((component, color, id)) =>
+       {component, id, orientation: 0, cell: None, color}
      );
 
 [@react.component]
 let make = () => {
-  let (selected, setSelectedHandler) = React.useState(() => None);
+  let (selected: option(shapeId), setSelectedHandler) =
+    React.useState(() => None);
   let (shapeArray, setShapeArray) = React.useState(() => init);
 
-  let placeShape = (id: int, cell: int) =>
+  let placeShape = (id: shapeId, cell: int) =>
     setShapeArray(_ =>
       shapeArray
       |> Array.map(x => x.id === id ? {...x, cell: Some(cell)} : x)
@@ -39,7 +33,11 @@ let make = () => {
 
   <div className="flex">
     <Grid
-      selectedShape={selected->Belt.Option.map(i => shapeArray[i])}
+      selectedShape={
+        selected->Belt.Option.flatMap(id =>
+          shapeArray->Belt.Array.getBy(shape => shape.id === id)
+        )
+      }
       placedShapes={
         shapeArray->Belt.Array.keep(shape => shape.cell->Belt.Option.isSome)
       }
@@ -48,7 +46,7 @@ let make = () => {
     <div className="flex flex-wrap">
       <ShapeSelector
         selected
-        setSelected={(num: int) => setSelectedHandler(_ => Some(num))}
+        setSelected={(id: shapeId) => setSelectedHandler(_ => Some(id))}
         shapeArray
       />
     </div>

@@ -54,7 +54,9 @@ let make =
                 selectedShape
                 ->Belt.Option.flatMap(shape =>
                     mousePos->Belt.Option.map(cell =>
-                      placeShape(shape.id, cell)
+                      if (isValid) {
+                        placeShape(shape.id, cell);
+                      }
                     )
                   )
                 ->Belt.Option.getWithDefault()
