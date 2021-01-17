@@ -38,7 +38,6 @@ let colorToString = (c: color) =>
 
 type shape = {
   id: shapeId,
-  orientation: int,
   component: React.element,
   cell: option(int),
   color,

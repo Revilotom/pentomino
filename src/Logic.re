@@ -16,25 +16,31 @@ let init: array(shape) =
     (<T />, Blue, T),
   |]
   |> Array.map(((component, color, id)) =>
-       {component, id, orientation: 0, cell: None, color}
+       {component, id, cell: None, color}
      );
 
-let keyToString = key =>
+let keyToOrientation = key =>
   switch (key) {
-  | "s" => 180
+  | "s" => (-180)
   | "w" => 180
   | "d" => 90
   | "a" => (-90)
   | _ => 0
   };
 
-let handleKey = e => Js.log(Webapi.Dom.KeyboardEvent.key(e));
-
 [@react.component]
 let make = () => {
   let (selected: option(shapeId), setSelectedHandler) =
     React.useState(() => None);
   let (shapeArray, setShapeArray) = React.useState(() => init);
+
+  let (orientation: int, setOrientation) = React.useState(() => 0);
+
+  let handleKey = e => {
+    let diff = Webapi.Dom.KeyboardEvent.key(e) |> keyToOrientation;
+    setOrientation(prevOrientation => (diff + prevOrientation) mod 360);
+  };
+  Js.log(orientation);
 
   let placeShape = (id: option(shapeId), cell: option(int)) =>
     setShapeArray(_ =>
