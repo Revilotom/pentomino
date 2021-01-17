@@ -50,3 +50,12 @@ let getRelativeIndexes =
       |> Array.map(coordsToindex)
     )
   ->Belt.Option.getWithDefault([||]);
+
+let getPlacedShapeAtCell = (cell: int, placedShapes: array(shape)) => {
+  placedShapes
+  ->Belt.Array.keep(x =>
+      getRelativeIndexes(x.cell, toCoords(Some(x)))
+      ->Belt.Array.some(index => index === cell)
+    )
+  ->Belt.Array.get(0);
+};

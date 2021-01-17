@@ -9,6 +9,19 @@ type color =
   | Pink
   | Teal;
 
+let colorToString = (c: color) =>
+  switch (c) {
+  | Red => "red"
+  | Indigo => "indigo"
+  | Orange => "orange"
+  | Green => "green"
+  | Yellow => "yellow"
+  | Purple => "purple"
+  | Blue => "blue"
+  | Pink => "pink"
+  | Teal => "teal"
+  };
+
 type shape = {
   id: int,
   orientation: int,

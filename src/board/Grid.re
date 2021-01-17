@@ -15,49 +15,20 @@ let make =
     ) => {
   let (mousePos, setMousePos) = React.useState(() => None);
 
-  let relativeIndexes =
-    getRelativeIndexes(mousePos, toCoords(selectedShape));
-
-  let placedIndexes: array(colorIndex) =
-    placedShapes->Belt.Array.map(x =>
-      {
-        color: x.color,
-        indexes: getRelativeIndexes(x.cell, toCoords(Some(x))),
-      }
-    );
-
-  let getPlacedShape = (cell: int) => {
-    placedIndexes
-    ->Belt.Array.keep(x => x.indexes->Belt.Array.some(index => index === cell))
-    ->Belt.Array.get(0);
-  };
-
   <div className="flex justify-items-auto justify-center">
     <div
       className="justify-center h-full flex flex-wrap content-start  "
       style={ReactDOM.Style.make(~width="700px", ())}>
       {Array.make(64, None)
        |> Array.mapi((i, _) => {
-            Js.log(getPlacedShape(i));
             <Cell
               className={
-                relativeIndexes->Belt.Array.some(x => x == i)
+                getRelativeIndexes(mousePos, toCoords(selectedShape))
+                ->Belt.Array.some(x => x == i)
                   ? "bg-blue-200"
                   : "bg-"
-                    ++ getPlacedShape(i)
-                       ->Belt.Option.map(x =>
-                           switch (x.color) {
-                           | Red => "red"
-                           | Indigo => "indigo"
-                           | Orange => "orange"
-                           | Green => "green"
-                           | Yellow => "yellow"
-                           | Purple => "purple"
-                           | Blue => "blue"
-                           | Pink => "pink"
-                           | Teal => "teal"
-                           }
-                         )
+                    ++ getPlacedShapeAtCell(i, placedShapes)
+                       ->Belt.Option.map(x => colorToString(x.color))
                        ->Belt.Option.getWithDefault("")
                     ++ "-500"
               }
@@ -73,7 +44,7 @@ let make =
               index={Some(i)}
               setPos={x => setMousePos(_ => x)}
               key={string_of_int(i)}
-            />;
+            />
           })
        |> React.array}
     </div>

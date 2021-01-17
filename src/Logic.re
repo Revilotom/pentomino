@@ -37,11 +37,6 @@ let make = () => {
       |> Array.map(x => x.id === id ? {...x, cell: Some(cell)} : x)
     );
 
-  let grid = Array.make(64, None);
-
-  // Js.log(selected);
-  // Js.log(shapeArray);
-
   <div className="flex">
     <Grid
       selectedShape={selected->Belt.Option.map(i => shapeArray[i])}
