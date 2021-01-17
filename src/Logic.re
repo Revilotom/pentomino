@@ -19,6 +19,9 @@ let init: array(shape) =
        {component, id, orientation: 0, cell: None, color}
      );
 
+let document = Webapi.Dom.Document.asEventTarget(Webapi.Dom.document);
+let handleKey = _ => Js.log("Key pressed");
+
 [@react.component]
 let make = () => {
   let (selected: option(shapeId), setSelectedHandler) =
@@ -32,6 +35,19 @@ let make = () => {
 
   let setSelected = (maybeId: option(shapeId)) =>
     setSelectedHandler(_ => maybeId);
+
+  React.useEffect0(() => {
+    Webapi.Dom.EventTarget.addEventListener("keypress", handleKey, document);
+    /* clean up the subscription */
+    Some(
+      () =>
+        Webapi.Dom.EventTarget.removeEventListener(
+          "keypress",
+          handleKey,
+          document,
+        ),
+    );
+  });
 
   <div className="flex">
     <Grid
