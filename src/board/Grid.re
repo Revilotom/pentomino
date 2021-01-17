@@ -60,9 +60,12 @@ let make =
             let isValid =
               set->Belt.Set.Int.size === Array.length(combinedArray);
 
+            let hoveredPlacedCell =
+              hoveredPlacedCells->Belt.Array.getBy(x => x.cell == i);
+
             <Cell
               className={
-                hoveredPlacedCells->Belt.Array.some(x => x.cell == i)
+                Belt.Option.isSome(hoveredPlacedCell)
                   ? "   bg-orange-100"
                   : highlightedIndexes->Belt.Array.some(x => x == i)
                       ? "bg-" ++ (isValid ? "blue" : "red") ++ "-200"
@@ -73,16 +76,19 @@ let make =
                         ++ "-500"
               }
               onClick={_ =>
-                selectedShape
-                ->Belt.Option.flatMap(shape =>
-                    mousePos->Belt.Option.map(cell =>
-                      if (isValid) {
-                        placeShape(shape.id, cell);
-                        setSelected(None);
-                      }
-                    )
+                switch (selectedShape) {
+                | Some(shape) =>
+                  if (isValid) {
+                    placeShape(shape.id, i);
+                    setSelected(None);
+                  }
+                | None =>
+                  setSelected(
+                    hoveredPlacedCell->Belt.Option.flatMap(placedCell =>
+                      placedCell.shapeId
+                    ),
                   )
-                ->Belt.Option.getWithDefault()
+                }
               }
               index={Some(i)}
               setPos={x => setMousePos(_ => x)}
