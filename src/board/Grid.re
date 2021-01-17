@@ -14,17 +14,25 @@ let make =
       ~placeShape,
       ~setSelected,
       ~orientation: int,
+      ~flipped: bool,
     ) => {
   let (mousePos, setMousePos) = React.useState(() => None);
 
   let highlightedIndexes =
-    getRelativeIndexes(mousePos, toCoords(selectedShape, orientation));
+    getRelativeIndexes(
+      mousePos,
+      toCoords(selectedShape, orientation, flipped),
+    );
 
   let placedIndexes =
     placedShapes->Belt.Array.map(placedShape =>
       getRelativeIndexes(
         placedShape.cell,
-        toCoords(Some(placedShape), placedShape.orientation),
+        toCoords(
+          Some(placedShape),
+          placedShape.orientation,
+          placedShape.flipped,
+        ),
       )
     );
 
@@ -33,7 +41,11 @@ let make =
     ->Belt.Array.map(placedShape =>
         getRelativeIndexes(
           placedShape.cell,
-          toCoords(Some(placedShape), placedShape.orientation),
+          toCoords(
+            Some(placedShape),
+            placedShape.orientation,
+            placedShape.flipped,
+          ),
         )
         ->Belt.Array.map(cell => {cell, shapeId: Some(placedShape.id)})
       )

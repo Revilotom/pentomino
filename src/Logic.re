@@ -16,13 +16,11 @@ let init: array(shape) =
     (<T />, Blue, T),
   |]
   |> Array.map(((component, color, id)) =>
-       {component, id, orientation: 0, cell: None, color}
+       {component, id, orientation: 0, flipped: false, cell: None, color}
      );
 
 let keyToOrientation = key =>
   switch (key) {
-  | "s" => (-180)
-  | "w" => 180
   | "d" => 90
   | "a" => (-90)
   | _ => 0
@@ -35,17 +33,24 @@ let make = () => {
   let (shapeArray, setShapeArray) = React.useState(() => init);
 
   let (orientation: int, setOrientation) = React.useState(() => 0);
+  let (flipped: bool, setFlipped) = React.useState(() => false);
 
   let handleKey = e => {
-    let diff = Webapi.Dom.KeyboardEvent.key(e) |> keyToOrientation;
+    let key = Webapi.Dom.KeyboardEvent.key(e);
+    let diff = key |> keyToOrientation;
     setOrientation(prevOrientation => (diff + prevOrientation) mod 360);
+    if (key === "w" || key == "s") {
+      setFlipped(prevFlipped => !prevFlipped);
+    };
   };
   Js.log(orientation);
 
   let placeShape = (id: option(shapeId), cell: option(int)) =>
     setShapeArray(_ =>
       shapeArray
-      |> Array.map(x => Some(x.id) === id ? {...x, cell, orientation} : x)
+      |> Array.map(x =>
+           Some(x.id) === id ? {...x, cell, orientation, flipped} : x
+         )
     );
 
   let setSelected = (maybeId: option(shapeId)) =>
@@ -68,6 +73,7 @@ let make = () => {
 
   <div className="flex">
     <Grid
+      flipped
       orientation
       selectedShape={
         selected->Belt.Option.flatMap(id =>

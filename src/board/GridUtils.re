@@ -1,5 +1,7 @@
 open ShapeSelector;
 
+let flip = ((x, y)) => (y, x);
+
 let rec applyRotation = ((x, y), rotation: int) =>
   switch (rotation) {
   | 0 => (x, y)
@@ -9,7 +11,8 @@ let rec applyRotation = ((x, y), rotation: int) =>
       : applyRotation((- y, x), rotation + 90)
   };
 
-let toCoords = (selectedShape, orientation) =>
+let toCoords =
+    (selectedShape: option(shape), orientation: int, flipped: bool) =>
   (
     switch (selectedShape) {
     | Some(selectedShape) =>
@@ -30,7 +33,8 @@ let toCoords = (selectedShape, orientation) =>
     | None => [||]
     }
   )
-  |> Array.map(coord => applyRotation(coord, orientation));
+  |> Array.map(coord => applyRotation(coord, orientation))
+  |> Array.map(coord => flipped ? flip(coord) : coord);
 
 let indexToCoords = (index: int) => (index / 8, index mod 8);
 let coordsToindex = ((x: int, y: int)) => x * 8 + y;
@@ -70,7 +74,11 @@ let getPlacedShapeAtCell = (cell: int, placedShapes: array(shape)) => {
   ->Belt.Array.keep(placedShape =>
       getRelativeIndexes(
         placedShape.cell,
-        toCoords(Some(placedShape), placedShape.orientation),
+        toCoords(
+          Some(placedShape),
+          placedShape.orientation,
+          placedShape.flipped,
+        ),
       )
       ->Belt.Array.some(index => index === cell)
     )
