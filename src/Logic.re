@@ -75,6 +75,10 @@ let make = () => {
     <Grid
       flipped
       orientation
+      resetOrientation={_ => {
+        setOrientation(_ => 0);
+        setFlipped(_ => false);
+      }}
       selectedShape={
         selected->Belt.Option.flatMap(id =>
           shapeArray->Belt.Array.getBy(shape => shape.id === id)

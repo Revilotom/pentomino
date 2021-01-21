@@ -14,6 +14,7 @@ let make =
       ~placeShape,
       ~setSelected,
       ~orientation: int,
+      ~resetOrientation,
       ~flipped: bool,
     ) => {
   let (mousePos, setMousePos) = React.useState(() => None);
@@ -100,6 +101,7 @@ let make =
                   if (isValid) {
                     placeShape(Some(shape.id), Some(i));
                     setSelected(None);
+                    resetOrientation();
                   }
                 | None =>
                   hoveredPlacedCell->Belt.Option.forEach(placedCell => {
