@@ -25,18 +25,6 @@ let make =
       toCoords(selectedShape, orientation, flipped),
     );
 
-  let placedIndexes =
-    placedShapes->Belt.Array.map(placedShape =>
-      getRelativeIndexes(
-        placedShape.cell,
-        toCoords(
-          Some(placedShape),
-          placedShape.orientation,
-          placedShape.flipped,
-        ),
-      )
-    );
-
   let placedCells: array(placedCells) =
     placedShapes
     ->Belt.Array.map(placedShape =>
@@ -50,7 +38,12 @@ let make =
         )
         ->Belt.Array.map(cell => {cell, shapeId: Some(placedShape.id)})
       )
-    ->Belt.Array.reduce([||], (acc, curr) => Belt.Array.concat(acc, curr));
+    ->Belt.Array.reduce([||], (acc, curr) => Belt.Array.concat(acc, curr))
+    ->Belt.Array.concat(
+        [|(3, 3), (4, 3), (3, 4), (4, 4)|]
+        ->Belt.Array.map(coordsToindex)
+        ->Belt.Array.map(cell => {cell, shapeId: None}),
+      );
 
   let hoveredPlacedCells =
     mousePos
@@ -71,19 +64,15 @@ let make =
        |> Array.mapi((i, _) => {
             let combinedArray =
               Belt.Array.concat(
-                placedIndexes->Belt.Array.reduce([||], (acc, curr) =>
-                  Belt.Array.concat(acc, curr)
-                ),
+                placedCells->Belt.Array.map(x => x.cell),
                 highlightedIndexes,
               );
             let set = Belt.Set.Int.fromArray(combinedArray);
             let isValid =
               set->Belt.Set.Int.size === Array.length(combinedArray);
-
             let hoveredPlacedCell =
               isValid
                 ? hoveredPlacedCells->Belt.Array.getBy(x => x.cell == i) : None;
-
             <Cell
               className={
                 Belt.Option.isSome(hoveredPlacedCell)
