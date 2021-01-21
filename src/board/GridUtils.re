@@ -49,6 +49,9 @@ let toCoords =
 let indexToCoords = (index: int) => (index / 8, index mod 8);
 let coordsToindex = ((x: int, y: int)) => x * 8 + y;
 
+let centerCells =
+  [|(3, 3), (4, 3), (3, 4), (4, 4)|]->Belt.Array.map(coordsToindex);
+
 let adjustCoords = (coords: array((int, int))) => {
   let max = (a, b) => a > b ? a : b;
   let min = (a, b) => a < b ? a : b;

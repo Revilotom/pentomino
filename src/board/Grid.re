@@ -38,12 +38,12 @@ let make =
         )
         ->Belt.Array.map(cell => {cell, shapeId: Some(placedShape.id)})
       )
-    ->Belt.Array.reduce([||], (acc, curr) => Belt.Array.concat(acc, curr))
-    ->Belt.Array.concat(
-        [|(3, 3), (4, 3), (3, 4), (4, 4)|]
-        ->Belt.Array.map(coordsToindex)
-        ->Belt.Array.map(cell => {cell, shapeId: None}),
-      );
+    ->Belt.Array.reduce([||], (acc, curr) => Belt.Array.concat(acc, curr));
+
+  let invalidCells =
+    placedCells->Belt.Array.concat(
+      centerCells->Belt.Array.map(cell => {cell, shapeId: None}),
+    );
 
   let hoveredPlacedCells =
     mousePos
@@ -64,7 +64,7 @@ let make =
        |> Array.mapi((i, _) => {
             let combinedArray =
               Belt.Array.concat(
-                placedCells->Belt.Array.map(x => x.cell),
+                invalidCells->Belt.Array.map(x => x.cell),
                 highlightedIndexes,
               );
             let set = Belt.Set.Int.fromArray(combinedArray);
@@ -84,6 +84,10 @@ let make =
                            ->Belt.Option.map(x => colorToString(x.color))
                            ->Belt.Option.getWithDefault("")
                         ++ "-500"
+                        ++ (
+                          centerCells->Belt.Array.some(x => x == i)
+                            ? " bg-gray-900" : ""
+                        )
               }
               onClick={_ =>
                 switch (selectedShape) {
