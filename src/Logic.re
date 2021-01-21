@@ -61,7 +61,6 @@ let make = () => {
       handleKey,
       Webapi.Dom.document,
     );
-    // /* clean up the subscription */
     Some(
       () =>
         Webapi.Dom.Document.removeKeyDownEventListener(

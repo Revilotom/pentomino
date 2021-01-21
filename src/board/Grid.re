@@ -81,7 +81,8 @@ let make =
               set->Belt.Set.Int.size === Array.length(combinedArray);
 
             let hoveredPlacedCell =
-              hoveredPlacedCells->Belt.Array.getBy(x => x.cell == i);
+              isValid
+                ? hoveredPlacedCells->Belt.Array.getBy(x => x.cell == i) : None;
 
             <Cell
               className={
