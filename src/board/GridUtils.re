@@ -1,6 +1,6 @@
 open ShapeSelector;
 
-let flip = ((x, y)) => (y, x);
+let flip = ((x, y)) => (- x, - y);
 
 let rec applyRotation = ((x, y), rotation: int) =>
   switch (rotation) {
