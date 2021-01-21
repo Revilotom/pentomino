@@ -14,7 +14,8 @@ let make =
       ~placeShape,
       ~setSelected,
       ~orientation: int,
-      ~resetOrientation,
+      ~setOrientation,
+      ~setFlipped,
       ~flipped: bool,
     ) => {
   let (mousePos, setMousePos) = React.useState(() => None);
@@ -73,6 +74,8 @@ let make =
             let hoveredPlacedCell =
               isValid
                 ? hoveredPlacedCells->Belt.Array.getBy(x => x.cell == i) : None;
+
+            let shapeAtThisCell = getPlacedShapeAtCell(i, placedShapes);
             <Cell
               className={
                 Belt.Option.isSome(hoveredPlacedCell)
@@ -80,7 +83,7 @@ let make =
                   : highlightedIndexes->Belt.Array.some(x => x == i)
                       ? "bg-" ++ (isValid ? "blue" : "red") ++ "-200"
                       : "bg-"
-                        ++ getPlacedShapeAtCell(i, placedShapes)
+                        ++ shapeAtThisCell
                            ->Belt.Option.map(x => colorToString(x.color))
                            ->Belt.Option.getWithDefault("")
                         ++ "-500"
@@ -95,12 +98,17 @@ let make =
                   if (isValid) {
                     placeShape(Some(shape.id), Some(i));
                     setSelected(None);
-                    resetOrientation();
+                    setOrientation(0);
+                    setFlipped(false);
                   }
                 | None =>
                   hoveredPlacedCell->Belt.Option.forEach(placedCell => {
                     placeShape(placedCell.shapeId, None);
                     setSelected(placedCell.shapeId);
+                    shapeAtThisCell->Belt.Option.forEach(shape => {
+                      setOrientation(shape.orientation);
+                      setFlipped(shape.flipped);
+                    });
                   })
                 }
               }
