@@ -1,6 +1,6 @@
 open ShapeSelector;
 
-let flip = ((x, y)) => (- x, - y);
+let flip = ((x, y)) => (- x, y);
 
 let rec applyRotation = ((x, y), rotation: int) =>
   switch (rotation) {
@@ -42,8 +42,8 @@ let toCoords =
     ((arr, translation)) =>
       arr
       |> Array.map(coord => addCoords(translation, coord))
-      |> Array.map(coord => applyRotation(coord, orientation))
       |> Array.map(coord => flipped ? flip(coord) : coord)
+      |> Array.map(coord => applyRotation(coord, orientation))
   );
 
 let indexToCoords = (index: int) => (index / 8, index mod 8);
