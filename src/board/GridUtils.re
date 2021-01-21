@@ -52,10 +52,11 @@ let coordsToindex = ((x: int, y: int)) => x * 8 + y;
 let adjustCoords = (coords: array((int, int))) => {
   let max = (a, b) => a > b ? a : b;
   let min = (a, b) => a < b ? a : b;
-  let maxX = coords->Belt.Array.reduce(-1, (acc, (x, y)) => max(x, acc));
-  let minX = coords->Belt.Array.reduce(8, (acc, (x, y)) => min(x, acc));
-  let maxY = coords->Belt.Array.reduce(-1, (acc, (x, y)) => max(y, acc));
-  let minY = coords->Belt.Array.reduce(8, (acc, (x, y)) => min(y, acc));
+
+  let maxX = coords->Belt.Array.reduce(-1, (acc, (x, _)) => max(x, acc));
+  let minX = coords->Belt.Array.reduce(8, (acc, (x, _)) => min(x, acc));
+  let maxY = coords->Belt.Array.reduce(-1, (acc, (_, y)) => max(y, acc));
+  let minY = coords->Belt.Array.reduce(8, (acc, (_, y)) => min(y, acc));
 
   let yDiff = minY < 0 ? abs(minY) : maxY > 7 ? - (maxY - 7) : 0;
   let xDiff = minX < 0 ? abs(minX) : maxX > 7 ? - (maxX - 7) : 0;
