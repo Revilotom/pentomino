@@ -1,6 +1,8 @@
 open ShapeSelector;
 open GridUtils;
 
+open Cell;
+
 type placedCells = {
   cell: int,
   shapeId: option(shapeId),
@@ -77,20 +79,19 @@ let make =
 
             let shapeAtThisCell = getPlacedShapeAtCell(i, placedShapes);
             <Cell
-              className={
+              cellType={
                 Belt.Option.isSome(hoveredPlacedCell)
-                  ? "   bg-orange-100"
+                  ? HighLightPlaced
                   : highlightedIndexes->Belt.Array.some(x => x == i)
-                      ? "bg-" ++ (isValid ? "blue" : "red") ++ "-200"
-                      : "bg-"
-                        ++ shapeAtThisCell
-                           ->Belt.Option.map(x => colorToString(x.color))
-                           ->Belt.Option.getWithDefault("")
-                        ++ "-500"
-                        ++ (
+                      ? isValid ? HighlightValid : HighlightInvalid
+                      : (
+                        switch (shapeAtThisCell) {
+                        | Some(shape) => Placed(shape.color)
+                        | None =>
                           centerCells->Belt.Array.some(x => x == i)
-                            ? " bg-gray-900" : ""
-                        )
+                            ? Center : Empty
+                        }
+                      )
               }
               onClick={_ =>
                 switch (selectedShape) {
