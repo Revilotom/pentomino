@@ -65,14 +65,15 @@ let make =
       style={ReactDOM.Style.make(~width="700px", ())}>
       {Array.make(64, None)
        |> Array.mapi((i, _) => {
-            let combinedArray =
-              Belt.Array.concat(
-                invalidCells->Belt.Array.map(x => x.cell),
-                highlightedIndexes,
-              );
-            let set = Belt.Set.Int.fromArray(combinedArray);
             let isValid =
-              set->Belt.Set.Int.size === Array.length(combinedArray);
+              !
+                hasDuplicates(
+                  Belt.Array.concat(
+                    invalidCells->Belt.Array.map(x => x.cell),
+                    highlightedIndexes,
+                  ),
+                );
+
             let hoveredPlacedCell =
               isValid
                 ? hoveredPlacedCells->Belt.Array.getBy(x => x.cell == i) : None;

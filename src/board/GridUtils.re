@@ -93,3 +93,6 @@ let getPlacedShapeAtCell = (cell: int, placedShapes: array(shape)) => {
     )
   ->Belt.Array.get(0);
 };
+
+let hasDuplicates = (arr: array(int)) =>
+  Belt.Set.Int.fromArray(arr) |> Belt.Set.Int.size !== Array.length(arr);
