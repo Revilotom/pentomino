@@ -96,3 +96,8 @@ let getPlacedShapeAtCell = (cell: int, placedShapes: array(shape)) => {
 
 let hasDuplicates = (arr: array(int)) =>
   Belt.Set.Int.fromArray(arr) |> Belt.Set.Int.size !== Array.length(arr);
+
+let includes = (arr, element) => arr->Belt.Array.some(x => x === element);
+
+let flatten = arr =>
+  arr->Belt.Array.reduce([||], (acc, curr) => Belt.Array.concat(acc, curr));

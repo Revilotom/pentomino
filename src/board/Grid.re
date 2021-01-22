@@ -41,7 +41,7 @@ let make =
         )
         ->Belt.Array.map(cell => {cell, shapeId: Some(placedShape.id)})
       )
-    ->Belt.Array.reduce([||], (acc, curr) => Belt.Array.concat(acc, curr));
+    ->flatten;
 
   let invalidCells =
     placedCells->Belt.Array.concat(
@@ -79,9 +79,8 @@ let make =
                 ? hoveredPlacedCells->Belt.Array.getBy(x => x.cell == i) : None;
 
             let shapeAtThisCell = getPlacedShapeAtCell(i, placedShapes);
-            let isHighlighted =
-              highlightedIndexes->Belt.Array.some(x => x == i);
-            let isCenter = centerCells->Belt.Array.some(x => x == i);
+            let isHighlighted = includes(highlightedIndexes, i);
+            let isCenter = includes(centerCells, i);
 
             <Cell
               cellType={
