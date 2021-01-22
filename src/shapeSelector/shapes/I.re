@@ -5,6 +5,7 @@ let make = () =>
     width="40"
     height="200"
     viewBox="0 0 40 200"
-    fill="none">
+    fill="none"
+    transform="scale(0.5)">
     <rect width="40" height="200" className="fill-current" />
   </svg>;

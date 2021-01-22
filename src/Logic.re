@@ -70,6 +70,9 @@ let make = () => {
     );
   });
 
+  let placedShapes =
+    shapeArray->Belt.Array.keep(shape => shape.cell->Belt.Option.isSome);
+
   <div className="flex">
     <Grid
       flipped
@@ -81,14 +84,12 @@ let make = () => {
           shapeArray->Belt.Array.getBy(shape => shape.id === id)
         )
       }
-      placedShapes={
-        shapeArray->Belt.Array.keep(shape => shape.cell->Belt.Option.isSome)
-      }
+      placedShapes
       setSelected
       placeShape
     />
-    <div className="flex flex-wrap">
-      <ShapeSelector selected setSelected shapeArray />
+    <div className="flex flex-wrap  w-1/3">
+      <ShapeSelector selected setSelected shapeArray placedShapes />
     </div>
   </div>;
 };

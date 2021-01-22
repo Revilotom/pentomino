@@ -45,24 +45,56 @@ type shape = {
   flipped: bool,
 };
 
+type shapeState =
+  | Placed
+  | Available
+  | Selected;
+
+let shapeToShapeState = (shape, selected, placedShapes) => {
+  let placedOrAvailable =
+    placedShapes
+    ->Belt.Array.getBy(pS => pS.id === shape.id)
+    ->Belt.Option.isSome
+      ? Placed : Available;
+
+  switch (selected) {
+  | Some(id) => id === shape.id ? Selected : placedOrAvailable
+  | None => placedOrAvailable
+  };
+};
+
 [@react.component]
-let make = (~setSelected, ~selected, ~shapeArray: array(shape)) => {
+let make =
+    (
+      ~setSelected,
+      ~selected,
+      ~shapeArray: array(shape),
+      ~placedShapes: array(shape),
+    ) => {
   <>
     {shapeArray
-     |> Array.mapi((i, x) =>
+     |> Array.mapi((i, shape) => {
+          let state = shapeToShapeState(shape, selected, placedShapes);
+
           <div
             key={string_of_int(i)}
             className={
-              "p-5 "
-              ++ (selected === Some(x.id) ? "text-red-600" : "text-blue-500 ")
+              switch (state) {
+              | Selected => " text-yellow-300"
+              | Available => "text-blue-200"
+              | Placed => "text-gray-500"
+              }
             }
             onClick={_ =>
-              selected === Some(x.id)
-                ? setSelected(None) : setSelected(Some(x.id))
+              switch (state) {
+              | Selected => setSelected(None)
+              | Available => setSelected(Some(shape.id))
+              | Placed => setSelected(None)
+              }
             }>
-            {x.component}
-          </div>
-        )
+            {shape.component}
+          </div>;
+        })
      |> React.array}
   </>;
 };
