@@ -78,18 +78,20 @@ let make =
                 ? hoveredPlacedCells->Belt.Array.getBy(x => x.cell == i) : None;
 
             let shapeAtThisCell = getPlacedShapeAtCell(i, placedShapes);
+            let isHighlighted =
+              highlightedIndexes->Belt.Array.some(x => x == i);
+            let isCenter = centerCells->Belt.Array.some(x => x == i);
+
             <Cell
               cellType={
                 Belt.Option.isSome(hoveredPlacedCell)
                   ? HighLightPlaced
-                  : highlightedIndexes->Belt.Array.some(x => x == i)
+                  : isHighlighted
                       ? isValid ? HighlightValid : HighlightInvalid
                       : (
                         switch (shapeAtThisCell) {
                         | Some(shape) => Placed(shape.color)
-                        | None =>
-                          centerCells->Belt.Array.some(x => x == i)
-                            ? Center : Empty
+                        | None => isCenter ? Center : Empty
                         }
                       )
               }
