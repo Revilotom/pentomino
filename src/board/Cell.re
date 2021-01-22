@@ -10,8 +10,8 @@ type cell =
 
 let cellTypeToTailwind = (cellType: cell) =>
   switch (cellType) {
-  | Empty => "bg-gray-200 border-red-400 border-2"
-  | Center => "bg-gray-900 "
+  | Empty => "bg-gray-100 border-grey-900 border-2"
+  | Center => "bg-gray-400 "
   | Placed(cellColor) => "bg-" ++ colorToString(cellColor) ++ "-500"
   | HighLightPlaced => "bg-orange-200"
   | HighlightValid => "bg-blue-200"
