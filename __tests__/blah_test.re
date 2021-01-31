@@ -1,16 +1,8 @@
 open Jest;
+open Solver;
 
 describe("Expect", () => {
   Expect.(test("toBe", () =>
-            expect(1 + 2) |> toBe(3)
+            expect(solve()) |> toBe()
           ))
-});
-
-describe("Expect.Operators", () => {
-  open Expect;
-  open! Expect.Operators;
-
-  test("==", () =>
-    expect(1 + 2) === 3
-  );
 });
