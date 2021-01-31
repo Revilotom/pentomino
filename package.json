@@ -1,23 +1,24 @@
 {
-  "name": "tailwind-starter",
-  "version": "0.1.0",
-  "license": "MIT",
-  "devDependencies": {
-    "bs-platform": "7.3.2",
-    "parcel-bundler": "^1.12.4",
-    "tailwindcss": "^1.8.3"
-  },
-  "dependencies": {
-    "bs-webapi": "^0.19.1",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "reason-react": ">=0.9.1"
-  },
-  "scripts": {
-    "build": "parcel build index.html",
-    "test": "echo \"Error: run tests from root\" && exit 1",
-    "re:build": "bsb -make-world -clean-world",
-    "re:watch": "bsb -make-world -clean-world -w",
-    "dev": "bsb -make-world -clean-world && parcel index.html"
-  }
+    "name": "tailwind-starter",
+    "version": "0.1.0",
+    "license": "MIT",
+    "devDependencies": {
+        "bs-platform": "7.3.2",
+        "parcel-bundler": "^1.12.4",
+        "tailwindcss": "^1.8.3"
+    },
+    "dependencies": {
+        "@glennsl/bs-jest": "^0.6.0",
+        "bs-webapi": "^0.19.1",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1",
+        "reason-react": ">=0.9.1"
+    },
+    "scripts": {
+        "build": "parcel build index.html",
+        "re:build": "bsb -make-world -clean-world",
+        "re:watch": "bsb -make-world -clean-world -w",
+        "dev": "bsb -make-world -clean-world && parcel index.html",
+        "test": "jest --watch"
+    }
 }
