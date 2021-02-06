@@ -26,9 +26,19 @@ module PairComparator =
           )
         ->Belt_Array.length;
 
+      Js.log("--------------------");
+      //   Js.log(lengthOfMatchesInA);
+      Js.log(a);
+      //   Js.log(lengthOfMatchesInB);
+      Js.log(b);
+
       lengthOfMatchesInA === a->Belt_Array.length
       && lengthOfMatchesInB === b->Belt_Array.length
-        ? 0 : (-1);
+        ? 0
+        : a->Belt_Array.length
+          + b->Belt_Array.length
+          - lengthOfMatchesInA
+          - lengthOfMatchesInB;
     };
   });
 
@@ -46,6 +56,7 @@ let solve = () => {
         ->Belt.Array.map(shape =>
             toCoords(Some(shape), shape.orientation, shape.flipped)
           );
+      //   print_string(combined)
       //   Js.log(combined);
       combined->Belt.Set.fromArray(~id=(module PairComparator));
     });
@@ -55,7 +66,7 @@ let solve = () => {
   //       x->Belt_Set.toArray->Belt_Array.forEach(y => Js.log(y))
   //     );
   //   ();
-  //   Js.log(initialOptions->Belt_Array.map(Belt_Set.size));
+  Js.log(initialOptions->Belt_Array.map(Belt_Set.size));
   //   let rec nested = (remainingOptions: array(array(shape))) => {};
   //   ();
 };
