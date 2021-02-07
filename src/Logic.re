@@ -1,23 +1,7 @@
 open ShapeSelector;
-
-let init: array(shape) =
-  [|
-    (<F />, Pink, F),
-    (<I />, Red, I),
-    (<L />, Blue, L),
-    (<N />, Green, N),
-    (<P />, Orange, P),
-    (<V />, Indigo, V),
-    (<W />, Purple, W),
-    (<X />, Yellow, X),
-    (<Y />, Teal, Y),
-    (<Z />, Yellow, Z),
-    (<U />, Indigo, U),
-    (<T />, Blue, T),
-  |]
-  |> Array.map(((component, color, id)) =>
-       {component, id, orientation: 0, flipped: false, cell: None, color}
-     );
+open Constants;
+open Solver;
+open GridUtils;
 
 let keyToOrientation = key =>
   switch (key) {
@@ -41,6 +25,11 @@ let make = () => {
     setOrientation(prevOrientation => (diff + prevOrientation) mod 360);
     if (key === "w" || key == "s") {
       setFlipped(prevFlipped => !prevFlipped);
+      solve(
+        getInitialOptions(),
+        Belt_Array.range(0, 63)
+        ->Belt_Array.keep(x => !includes(centerCells, x)),
+      );
     };
   };
   Js.log(orientation);

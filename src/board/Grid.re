@@ -1,8 +1,6 @@
 open ShapeSelector;
 open GridUtils;
 
-open Cell;
-
 type placedCells = {
   cell: int,
   shapeId: option(shapeId),

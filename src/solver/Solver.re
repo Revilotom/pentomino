@@ -1,10 +1,10 @@
-open Logic;
 open ShapeSelector;
 
 open GridUtils;
-open PairComparator;
 
-type option = {
+open Constants;
+
+type moveOption = {
   shapeId,
   cells: array(array(int)),
 };
@@ -45,7 +45,9 @@ let getInitialOptions = () =>
     {cells: combined, shapeId: shape.id};
   });
 
-let solve = (options: array(option), freePlaces: array(int)) => {
+let rec solve = (options: array(moveOption), freePlaces: array(int)) => {
+  Js.log2("solver ", freePlaces->Belt_Array.length);
+
   let blah =
     options->Belt_Array.map(opt =>
       opt.cells
@@ -62,7 +64,16 @@ let solve = (options: array(option), freePlaces: array(int)) => {
               xs->Belt_Array.every(x => includes(freePlaces, x))
             );
 
-          Js.log2(validMoves, opt.shapeId);
+          let res =
+            validMoves->Belt_Array.map(move => {
+              let newOptions =
+                options->Belt_Array.keep(o => o.shapeId !== opt.shapeId);
+              let newFreePlaces =
+                freePlaces->Belt_Array.keep(p => !includes(move, p));
+              solve(newOptions, newFreePlaces);
+            });
+          ();
+          // Js.log2(validMoves, opt.shapeId);
         })
     );
   ();
