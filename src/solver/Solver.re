@@ -27,27 +27,20 @@ let toSet = array =>
   ->Belt_Array.map(x => x->Belt_Array.map(coordsToindex))
   ->Belt.Set.fromArray(~id=(module BlahComp));
 
-let solve = () => {
-  let initialOptions =
-    init->Belt.Array.map(shape => {
-      let rotations =
-        Belt.Array.make(4, shape)
-        ->Belt.Array.mapWithIndex((i, x) => {...x, orientation: i * 90});
-      let combined =
-        Belt.Array.concat(
-          rotations,
-          rotations->Belt.Array.map(x => {...x, flipped: true}),
-        )
-        ->Belt.Array.map(shape =>
-            toCoords(Some(shape), shape.orientation, shape.flipped)
-            ->Belt_Set.toArray
-            ->Belt_Array.map(coordsToindex)
-          );
-      //   print_string(combined)
-      // Js.log(combined);
-      combined->Belt.Set.fromArray(~id=(module BlahComp));
-    });
-  ();
-
-  Js.log(initialOptions->Belt_Array.map(Belt_Set.size));
-};
+let getInitialOptions = () =>
+  init->Belt.Array.map(shape => {
+    let rotations =
+      Belt.Array.make(4, shape)
+      ->Belt.Array.mapWithIndex((i, x) => {...x, orientation: i * 90});
+    let combined =
+      Belt.Array.concat(
+        rotations,
+        rotations->Belt.Array.map(x => {...x, flipped: true}),
+      )
+      ->Belt.Array.map(shape =>
+          toCoords(Some(shape), shape.orientation, shape.flipped)
+          ->Belt_Set.toArray
+          ->Belt_Array.map(coordsToindex)
+        );
+    combined->Belt.Set.fromArray(~id=(module BlahComp));
+  });
