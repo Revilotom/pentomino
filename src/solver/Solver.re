@@ -4,33 +4,28 @@ open ShapeSelector;
 open GridUtils;
 open PairComparator;
 
-let toArray = set =>
-  set->Belt.Set.toArray->Belt_Array.map(elem => elem->Belt_Set.toArray);
-
-module PairSetComparator =
+let toArray = set => set->Belt.Set.toArray;
+module BlahComp =
   Belt.Id.MakeComparable({
-    type t = Belt_Set.t(PairComparator.t, PairComparator.identity);
+    type t = array(int);
 
-    let cmp = (a, b) => {
-      let diff = Belt_Set.diff(a, b);
+    let cmp = (arrA, arrB) => {
+      arrA |> Array.sort((a, b) => a - b);
+      arrB |> Array.sort((a, b) => a - b);
 
-      let arrA = a->Belt_Set.toArray;
-
-      let arrB = b->Belt_Set.toArray;
       let zipped = Belt_Array.zip(arrA, arrB);
-      let compare =
+      let c =
         zipped->Belt_Array.map(((a1, b1)) => Pervasives.compare(a1, b1));
 
-      diff->Belt_Set.size === 0 ? 0 : compare[0];
+      c->Belt_Array.reduce(0, (acc, curr) => acc === 0 ? curr : acc);
+      // diff->Belt_Set.size === 0 ? 0 : c[0];
     };
   });
 
 let toSet = array =>
   array
-  ->Belt_Array.map(elem =>
-      elem->Belt_Set.fromArray(~id=(module PairComparator))
-    )
-  ->Belt.Set.fromArray(~id=(module PairSetComparator));
+  ->Belt_Array.map(x => x->Belt_Array.map(coordsToindex))
+  ->Belt.Set.fromArray(~id=(module BlahComp));
 
 let solve = () => {
   let initialOptions =
@@ -45,10 +40,12 @@ let solve = () => {
         )
         ->Belt.Array.map(shape =>
             toCoords(Some(shape), shape.orientation, shape.flipped)
+            ->Belt_Set.toArray
+            ->Belt_Array.map(coordsToindex)
           );
       //   print_string(combined)
-      Js.log(combined->Belt_Array.map(elem => elem->Belt_Set.toArray));
-      combined->Belt.Set.fromArray(~id=(module PairSetComparator));
+      // Js.log(combined);
+      combined->Belt.Set.fromArray(~id=(module BlahComp));
     });
   ();
 
