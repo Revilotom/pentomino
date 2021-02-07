@@ -4,7 +4,11 @@ open ShapeSelector;
 open GridUtils;
 open PairComparator;
 
-let toArray = set => set->Belt.Set.toArray;
+type option = {
+  shapeId,
+  cells: array(array(int)),
+};
+
 module BlahComp =
   Belt.Id.MakeComparable({
     type t = array(int);
@@ -18,14 +22,8 @@ module BlahComp =
         zipped->Belt_Array.map(((a1, b1)) => Pervasives.compare(a1, b1));
 
       c->Belt_Array.reduce(0, (acc, curr) => acc === 0 ? curr : acc);
-      // diff->Belt_Set.size === 0 ? 0 : c[0];
     };
   });
-
-let toSet = array =>
-  array
-  ->Belt_Array.map(x => x->Belt_Array.map(coordsToindex))
-  ->Belt.Set.fromArray(~id=(module BlahComp));
 
 let getInitialOptions = () =>
   init->Belt.Array.map(shape => {
@@ -42,5 +40,7 @@ let getInitialOptions = () =>
           ->Belt_Set.toArray
           ->Belt_Array.map(coordsToindex)
         );
-    combined->Belt.Set.fromArray(~id=(module BlahComp));
+    combined->Belt.Set.fromArray(~id=(module BlahComp))->Belt_Set.toArray;
   });
+
+let solve = (options, freePlaces) => {};
