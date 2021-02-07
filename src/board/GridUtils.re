@@ -1,4 +1,5 @@
 open ShapeSelector;
+open PairComparator;
 
 let flip = ((x, y)) => (- x, y);
 
@@ -44,6 +45,7 @@ let toCoords =
       |> Array.map(coord => addCoords(translation, coord))
       |> Array.map(coord => flipped ? flip(coord) : coord)
       |> Array.map(coord => applyRotation(coord, orientation))
+      |> Belt_Set.fromArray(~id=(module PairComparator))
   );
 
 let indexToCoords = (index: int) => (index / 8, index mod 8);
@@ -83,10 +85,12 @@ let getPlacedShapeAtCell = (cell: int, placedShapes: array(shape)) => {
   ->Belt.Array.keep(placedShape =>
       getRelativeIndexes(
         placedShape.cell,
-        toCoords(
-          Some(placedShape),
-          placedShape.orientation,
-          placedShape.flipped,
+        Belt_Set.toArray(
+          toCoords(
+            Some(placedShape),
+            placedShape.orientation,
+            placedShape.flipped,
+          ),
         ),
       )
       ->Belt.Array.some(index => index === cell)

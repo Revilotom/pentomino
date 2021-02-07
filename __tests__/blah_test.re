@@ -1,5 +1,6 @@
 open Jest;
 open Solver;
+open PairComparator;
 
 describe("Set", () => {
   //   Expect.(test("toBe", () =>
@@ -52,17 +53,24 @@ describe("Set", () => {
           [|(0, 2), (0, 1), (0, 0), (0, (-1)), (0, (-2))|],
         |];
 
-        //   let a = [|
-        //     [|((-2), 0), ((-1), 0), (0, 0), (1, 0), (2, 0)|],
-        //     [|(2, 0), (1, 0), (0, 0), ((-1), 0), ((-2), 0)|],
-        //   |];
+        let ans = [|
+          [|((-2), 0), ((-1), 0), (0, 0), (1, 0), (2, 0)|],
+          [|(2, 0), (1, 0), (0, 0), ((-1), 0), ((-2), 0)|],
+        |];
 
-        expect([||])
-        |> toEqual(
-             a
-             ->Belt.Set.fromArray(~id=(module PairComparator))
-             ->Belt_Set.toArray,
-           );
+        let toSet = array =>
+          array
+          ->Belt_Array.map(elem =>
+              elem->Belt_Set.fromArray(~id=(module PairComparator))
+            )
+          ->Belt.Set.fromArray(~id=(module PairSetComparator));
+
+        let toArray = set =>
+          set
+          ->Belt.Set.toArray
+          ->Belt_Array.map(elem => elem->Belt_Set.toArray);
+
+        expect(ans->toSet->Belt_Set.diff(a->toSet)->toArray) |> toEqual([||]);
       })
     )
 });
