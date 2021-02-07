@@ -39,8 +39,31 @@ let getInitialOptions = () =>
           toCoords(Some(shape), shape.orientation, shape.flipped)
           ->Belt_Set.toArray
           ->Belt_Array.map(coordsToindex)
-        );
-    combined->Belt.Set.fromArray(~id=(module BlahComp))->Belt_Set.toArray;
+        )
+      ->Belt.Set.fromArray(~id=(module BlahComp))
+      ->Belt_Set.toArray;
+    {cells: combined, shapeId: shape.id};
   });
 
-let solve = (options, freePlaces) => {};
+let solve = (options: array(option), freePlaces: array(int)) => {
+  let blah =
+    options->Belt_Array.map(opt =>
+      opt.cells
+      ->Belt_Array.map(indexes => {
+          let transformed =
+            freePlaces->Belt_Array.map(place =>
+              indexes->Belt_Array.map(coord =>
+                addCoords(indexToCoords(coord), indexToCoords(place))
+                ->coordsToindex
+              )
+            );
+          let validMoves =
+            transformed->Belt_Array.keep(xs =>
+              xs->Belt_Array.every(x => includes(freePlaces, x))
+            );
+
+          Js.log2(validMoves, opt.shapeId);
+        })
+    );
+  ();
+};
