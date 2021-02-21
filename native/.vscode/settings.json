@@ -1,0 +1,6 @@
+{
+    "ocaml.sandbox": {
+        "kind": "esy",
+        "root": "/Users/tom/Documents/reason/pentomino/native"
+    }
+}

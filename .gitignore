@@ -10,4 +10,22 @@ npm-debug.log
 .bsb.lock
 *.bs.js
 
+.merlin
+node_modules/
+_build
+_esy
+_release
+*.byte
+*.native
+*.install
+esy.lock
+.cache
+dist
+*.ast
+*.cmi
+*.cmj
+*.cmt
+*.d
+web/lib/bs/
+
 yarn.lock
