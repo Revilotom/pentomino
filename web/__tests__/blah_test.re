@@ -2,56 +2,63 @@ open Jest;
 open Solver;
 open GridUtils;
 
+open Belt_Array;
+
 describe("Initial options", () => {
   Expect.(
     test("toBe", () => {
       let opts = getInitialOptions();
-      let originalGrid =
-        Belt_Array.range(0, 63)
-        ->Belt_Array.keep(x => !includes(centerCells, x));
+      let originalGrid = range(0, 63)->keep(x => !includes(centerCells, x));
 
       let allPositions = getAllPositions(getInitialOptions(), originalGrid);
 
       let gridToPrint =
-        Belt_Array.range(0, 7)
-        ->Belt_Array.map(row => Belt_Array.range(row * 8, (row + 1) * 8));
+        range(0, 7)->map(row => range(row * 8, (row + 1) * 8 - 1));
 
       // Js.log(allPositions);
 
       let s =
         allPositions
-        ->Belt_Array.map(x =>
+        ->map(x =>
             x.orientations
-            ->Belt_Array.map(coords =>
+            ->map(coords =>
                 gridToPrint
-                ->Belt_Array.map(row =>
+                ->map(row =>
                     row
-                    ->Belt_Array.map(cell =>
-                        coords
-                        ->Belt_Array.getBy(x => coordsToindex(x) === cell)
-                        ->Belt_Option.isSome
-                          ? "@" : " "
+                    ->map(cell =>
+                        includes(centerCells, cell)
+                          ? "O"
+                          : coords
+                            ->getBy(x => coordsToindex(x) === cell)
+                            ->Belt_Option.isSome
+                              ? "@" : "-"
                       )
-                    ->Belt_Array.joinWith("", x => x)
+                    // string_of_int(cell)->String.length === 1
+                    //     ? "  " ++ string_of_int(cell)
+                    //     : "  " ++ string_of_int(cell)
+                    ->joinWith("", x => x)
                   )
-                ->Belt_Array.joinWith("\n", x => x)
+                ->joinWith("\n", x => x)
               )
-            ->Belt_Array.joinWith("\n", x => x)
+            ->joinWith("\n\n", x => x)
           )
-        ->Belt_Array.joinWith("\n", x => x);
+        ->joinWith("\n", x => x);
 
       Js.log(s);
-
       Js.log(
-        allPositions->Belt_Array.map(x => x.orientations->Belt_Array.length),
+        allPositions->map(x =>
+          x.orientations->map(y => y->map(z => z->coordsToString))
+        ),
       );
+
+      Js.log(allPositions->map(x => x.orientations->length));
       Js.log(
         allPositions
-        ->Belt_Array.map(x => x.orientations->Belt_Array.length)
-        ->Belt_Array.reduce(0, (acc, curr) => acc + curr),
+        ->map(x => x.orientations->length)
+        ->reduce(0, (acc, curr) => acc + curr),
       );
 
-      expect(opts->Belt_Array.map(x => Belt_Array.length(x.orientations)))
+      expect(opts->map(x => length(x.orientations)))
       |> toEqual([|8, 2, 8, 8, 8, 4, 4, 1, 8, 4, 4, 4|]);
     })
   )

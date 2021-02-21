@@ -19,34 +19,29 @@ module BlahComp =
       arrA |> Array.sort((a, b) => a - b);
       arrB |> Array.sort((a, b) => a - b);
 
-      let zipped = Belt_Array.zip(arrA, arrB);
-      let c =
-        zipped->Belt_Array.map(((a1, b1)) => Pervasives.compare(a1, b1));
+      let zipped = zip(arrA, arrB);
+      let c = zipped->map(((a1, b1)) => Pervasives.compare(a1, b1));
 
-      c->Belt_Array.reduce(0, (acc, curr) => acc === 0 ? curr : acc);
+      c->reduce(0, (acc, curr) => acc === 0 ? curr : acc);
     };
   });
 
 let getInitialOptions = () =>
-  init->Belt.Array.map(shape => {
+  init->map(shape => {
     let rotations =
-      Belt.Array.make(4, shape)
-      ->Belt.Array.mapWithIndex((i, x) => {...x, orientation: i * 90});
+      make(4, shape)->mapWithIndex((i, x) => {...x, orientation: i * 90});
     let combined =
-      Belt.Array.concat(
-        rotations,
-        rotations->Belt.Array.map(x => {...x, flipped: true}),
-      )
-      ->Belt.Array.map(shape =>
+      concat(rotations, rotations->map(x => {...x, flipped: true}))
+      ->map(shape =>
           toCoords(Some(shape), shape.orientation, shape.flipped)
           ->Belt_Set.toArray
-          ->Belt_Array.map(coordsToindex)
+          ->map(coordsToindex)
         )
       ->Belt.Set.fromArray(~id=(module BlahComp))
       ->Belt_Set.toArray;
     let orientations =
-      combined->Belt_Array.map(orientation =>
-        orientation->Belt_Array.map(index => indexToCoords(index))
+      combined->map(orientation =>
+        orientation->map(index => indexToCoords(index))
       );
 
     {orientations, shapeId: shape.id};
@@ -55,22 +50,22 @@ let getInitialOptions = () =>
 let rec getAllPositions =
         (options: array(moveOption), freePlaces: array(int)) => {
   let blah =
-    options->Belt_Array.map(opt =>
+    options->map(opt =>
       {
         ...opt,
         orientations:
           opt.orientations
-          ->Belt_Array.map(coordinates => {
+          ->map(coordinates => {
               let transformed =
-                freePlaces->Belt_Array.map(place =>
-                  coordinates->Belt_Array.map(coord =>
+                freePlaces->map(place =>
+                  coordinates->map(coord =>
                     addCoords(coord, indexToCoords(place))
                   )
                 );
 
               let validMoves =
-                transformed->Belt_Array.keep(coordindates =>
-                  coordindates->Belt_Array.every(coord => {
+                transformed->keep(coordindates =>
+                  coordindates->every(coord => {
                     let (x, y) = coord;
                     includes(freePlaces, coordsToindex(coord))
                     && x > (-1)
@@ -80,19 +75,19 @@ let rec getAllPositions =
                   })
                 );
 
-              // Js.log(removeDuplicates->Belt_Array.length);
+              // Js.log(removeDuplicates->length);
 
               validMoves;
               // Js.log2(validMoves, opt.shapeId);
             })
           ->flatten
-          ->Belt_Array.map(orientation =>
-              orientation->Belt_Array.map(coord => coordsToindex(coord))
+          ->map(orientation =>
+              orientation->map(coord => coordsToindex(coord))
             )
           ->Belt.Set.fromArray(~id=(module BlahComp))
           ->Belt_Set.toArray
-          ->Belt_Array.map(orientation =>
-              orientation->Belt_Array.map(index => indexToCoords(index))
+          ->map(orientation =>
+              orientation->map(index => indexToCoords(index))
             ),
       }
     );
