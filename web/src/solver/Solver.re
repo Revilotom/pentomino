@@ -4,9 +4,11 @@ open GridUtils;
 
 open Constants;
 
+type coords = array((int, int));
+
 type moveOption = {
   shapeId,
-  cells: array(array(int)),
+  orientations: array(coords),
 };
 
 module BlahComp =
@@ -42,39 +44,45 @@ let getInitialOptions = () =>
         )
       ->Belt.Set.fromArray(~id=(module BlahComp))
       ->Belt_Set.toArray;
-    {cells: combined, shapeId: shape.id};
+    let orientations =
+      combined->Belt_Array.map(orientation =>
+        orientation->Belt_Array.map(index => indexToCoords(index))
+      );
+
+    {orientations, shapeId: shape.id};
   });
 
-let rec solve = (options: array(moveOption), freePlaces: array(int)) => {
-  Js.log2("solver ", freePlaces->Belt_Array.length);
-
+let rec getAllPositions =
+        (options: array(moveOption), freePlaces: array(int)) => {
   let blah =
     options->Belt_Array.map(opt =>
-      opt.cells
-      ->Belt_Array.map(indexes => {
-          let transformed =
-            freePlaces->Belt_Array.map(place =>
-              indexes->Belt_Array.map(coord =>
-                addCoords(indexToCoords(coord), indexToCoords(place))
-                ->coordsToindex
-              )
-            );
-          let validMoves =
-            transformed->Belt_Array.keep(xs =>
-              xs->Belt_Array.every(x => includes(freePlaces, x))
-            );
-
-          let res =
-            validMoves->Belt_Array.map(move => {
-              let newOptions =
-                options->Belt_Array.keep(o => o.shapeId !== opt.shapeId);
-              let newFreePlaces =
-                freePlaces->Belt_Array.keep(p => !includes(move, p));
-              solve(newOptions, newFreePlaces);
-            });
-          ();
-          // Js.log2(validMoves, opt.shapeId);
-        })
+      {
+        ...opt,
+        orientations:
+          opt.orientations
+          ->Belt_Array.map(coordinates => {
+              let transformed =
+                freePlaces->Belt_Array.map(place =>
+                  coordinates->Belt_Array.map(coord =>
+                    addCoords(coord, indexToCoords(place))
+                  )
+                );
+              let validMoves =
+                transformed->Belt_Array.keep(coordindates =>
+                  coordindates->Belt_Array.every(coord => {
+                    let (x, y) = coord;
+                    includes(freePlaces, coordsToindex(coord))
+                    && x > (-1)
+                    && x < 8
+                    && y > (-1)
+                    && y < 8;
+                  })
+                );
+              validMoves;
+              // Js.log2(validMoves, opt.shapeId);
+            })
+          ->flatten,
+      }
     );
-  ();
+  blah;
 };

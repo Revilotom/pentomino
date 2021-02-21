@@ -25,11 +25,6 @@ let make = () => {
     setOrientation(prevOrientation => (diff + prevOrientation) mod 360);
     if (key === "w" || key == "s") {
       setFlipped(prevFlipped => !prevFlipped);
-      solve(
-        getInitialOptions(),
-        Belt_Array.range(0, 63)
-        ->Belt_Array.keep(x => !includes(centerCells, x)),
-      );
     };
   };
   Js.log(orientation);

@@ -50,6 +50,8 @@ let toCoords =
 
 let indexToCoords = (index: int) => (index / 8, index mod 8);
 let coordsToindex = ((x: int, y: int)) => x * 8 + y;
+let coordsToString = ((x: int, y: int)) =>
+  "(" ++ string_of_int(x) ++ "," ++ string_of_int(y) ++ ")";
 
 let centerCells =
   [|(3, 3), (4, 3), (3, 4), (4, 4)|]->Belt.Array.map(coordsToindex);
