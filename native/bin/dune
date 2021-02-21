@@ -1,4 +1,5 @@
 (executable
  (name Hello)
+ (package hello-reason)
  (public_name Hello)
  (libraries console.lib lib))
