@@ -4,6 +4,8 @@ open GridUtils;
 
 open Constants;
 
+open Belt_Array;
+
 type coords = array((int, int));
 
 type moveOption = {

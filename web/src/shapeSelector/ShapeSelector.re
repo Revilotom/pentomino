@@ -12,6 +12,22 @@ type shapeId =
   | Y
   | Z;
 
+let shapeToString = s =>
+  switch (s) {
+  | F => "F"
+  | I => "I"
+  | L => "L"
+  | N => "L"
+  | P => "P"
+  | T => "P"
+  | U => "U"
+  | V => "V"
+  | W => "W"
+  | X => "X"
+  | Y => "Y"
+  | Z => "Z"
+  };
+
 type color =
   | Red
   | Indigo

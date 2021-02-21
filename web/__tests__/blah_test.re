@@ -2,6 +2,8 @@ open Jest;
 open Solver;
 open GridUtils;
 
+open ShapeSelector;
+
 open Belt_Array;
 
 describe("Initial options", () => {
@@ -51,7 +53,12 @@ describe("Initial options", () => {
         ),
       );
 
-      Js.log(allPositions->map(x => x.orientations->length));
+      Js.log(
+        allPositions->map(x =>
+          (shapeToString(x.shapeId), x.orientations->length)
+        ),
+      );
+
       Js.log(
         allPositions
         ->map(x => x.orientations->length)
