@@ -6,21 +6,41 @@ describe("Initial options", () => {
   Expect.(
     test("toBe", () => {
       let opts = getInitialOptions();
+      let originalGrid =
+        Belt_Array.range(0, 63)
+        ->Belt_Array.keep(x => !includes(centerCells, x));
 
-      let allPositions =
-        getAllPositions(
-          getInitialOptions(),
-          Belt_Array.range(0, 63)
-          ->Belt_Array.keep(x => !includes(centerCells, x)),
-        );
+      let allPositions = getAllPositions(getInitialOptions(), originalGrid);
+
+      let gridToPrint =
+        Belt_Array.range(0, 7)
+        ->Belt_Array.map(row => Belt_Array.range(row * 8, (row + 1) * 8));
 
       // Js.log(allPositions);
-      // Js.log(
-      //   allPositions->Belt_Array.map(x =>
-      //     x.orientations
-      //     ->Belt_Array.map(coords => coords->Belt_Array.map(coordsToindex))
-      //   ),
-      // );
+
+      let s =
+        allPositions
+        ->Belt_Array.map(x =>
+            x.orientations
+            ->Belt_Array.map(coords =>
+                gridToPrint
+                ->Belt_Array.map(row =>
+                    row
+                    ->Belt_Array.map(cell =>
+                        coords
+                        ->Belt_Array.getBy(x => coordsToindex(x) === cell)
+                        ->Belt_Option.isSome
+                          ? "@" : " "
+                      )
+                    ->Belt_Array.joinWith("", x => x)
+                  )
+                ->Belt_Array.joinWith("\n", x => x)
+              )
+            ->Belt_Array.joinWith("\n", x => x)
+          )
+        ->Belt_Array.joinWith("\n", x => x);
+
+      Js.log(s);
 
       Js.log(
         allPositions->Belt_Array.map(x => x.orientations->Belt_Array.length),
