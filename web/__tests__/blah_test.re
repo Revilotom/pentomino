@@ -14,13 +14,13 @@ describe("Initial options", () => {
           ->Belt_Array.keep(x => !includes(centerCells, x)),
         );
 
-      Js.log(allPositions);
-      Js.log(
-        allPositions->Belt_Array.map(x =>
-          x.orientations
-          ->Belt_Array.map(coords => coords->Belt_Array.map(coordsToString))
-        ),
-      );
+      // Js.log(allPositions);
+      // Js.log(
+      //   allPositions->Belt_Array.map(x =>
+      //     x.orientations
+      //     ->Belt_Array.map(coords => coords->Belt_Array.map(coordsToindex))
+      //   ),
+      // );
 
       Js.log(
         allPositions->Belt_Array.map(x => x.orientations->Belt_Array.length),

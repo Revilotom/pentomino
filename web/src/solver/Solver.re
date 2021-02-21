@@ -67,6 +67,7 @@ let rec getAllPositions =
                     addCoords(coord, indexToCoords(place))
                   )
                 );
+
               let validMoves =
                 transformed->Belt_Array.keep(coordindates =>
                   coordindates->Belt_Array.every(coord => {
@@ -78,10 +79,21 @@ let rec getAllPositions =
                     && y < 8;
                   })
                 );
+
+              // Js.log(removeDuplicates->Belt_Array.length);
+
               validMoves;
               // Js.log2(validMoves, opt.shapeId);
             })
-          ->flatten,
+          ->flatten
+          ->Belt_Array.map(orientation =>
+              orientation->Belt_Array.map(coord => coordsToindex(coord))
+            )
+          ->Belt.Set.fromArray(~id=(module BlahComp))
+          ->Belt_Set.toArray
+          ->Belt_Array.map(orientation =>
+              orientation->Belt_Array.map(index => indexToCoords(index))
+            ),
       }
     );
   blah;
