@@ -12,10 +12,11 @@ let rec applyRotation = ((x, y), rotation: int) =>
       : applyRotation((- y, x), rotation + 90)
   };
 
-let addCoords = ((x1: int, y1: int), (x2: int, y2: int)) => (
-  x1 + x2,
-  y1 + y2,
-);
+let addCoords = ((x1: int, y1: int), (x2: int, y2: int)) => {
+  let xSum = x1 + x2;
+  let ySum = y1 + y2;
+  (xSum, ySum);
+};
 
 let toCoords =
     (selectedShape: option(shape), orientation: int, flipped: bool) =>
@@ -33,7 +34,7 @@ let toCoords =
       | X => [|((-1), 0), (0, (-1)), (0, 0), (0, 1), (1, 0)|]
       | Y => [|(0, (-2)), (0, (-1)), (0, 0), (0, 1), ((-1), 0)|]
       | T => [|((-1), (-1)), ((-1), 0), ((-1), 1), (0, 0), ((-1), 0)|]
-      | U => [|((-1), (-1)), (0, (-1)), (0, 0), (0, 1), ((-1), 1)|]
+      | U => [|(0, 0), (1, 0), (1, 1), (1, 2), (0, 2)|]
       | Z => [|((-1), (-1)), ((-1), 0), (0, 0), (1, 0), (1, 1)|]
       }
     | None => [||]
@@ -47,17 +48,19 @@ let toCoords =
   );
 
 let indexToCoords = (index: int) => (index / 8, index mod 8);
+
 let coordsToindex = ((x: int, y: int)) => x * 8 + y;
+
 let coordsToString = ((x: int, y: int)) =>
   "(" ++ string_of_int(x) ++ "," ++ string_of_int(y) ++ ")";
 
 let centerCells =
   [|(3, 3), (4, 3), (3, 4), (4, 4)|]->Belt.Array.map(coordsToindex);
 
-let adjustCoords = (coords: array((int, int))) => {
-  let max = (a, b) => a > b ? a : b;
-  let min = (a, b) => a < b ? a : b;
+let max = (a, b) => a > b ? a : b;
+let min = (a, b) => a < b ? a : b;
 
+let adjustCoords = (coords: array((int, int))) => {
   let maxX = coords->Belt.Array.reduce(-1, (acc, (x, _)) => max(x, acc));
   let minX = coords->Belt.Array.reduce(8, (acc, (x, _)) => min(x, acc));
   let maxY = coords->Belt.Array.reduce(-1, (acc, (_, y)) => max(y, acc));

@@ -50,18 +50,30 @@ let getInitialOptions = () =>
   init->map(shape => {
     let rotations =
       make(4, shape)->mapWithIndex((i, x) => {...x, orientation: i * 90});
+
     let combined =
       concat(rotations, rotations->map(x => {...x, flipped: true}))
-      ->map(shape =>
-          toCoords(Some(shape), shape.orientation, shape.flipped)
-          ->map(coordsToindex)
-        )
+      ->map(shape => {
+          let coords =
+            toCoords(Some(shape), shape.orientation, shape.flipped);
+          let minX = coords->reduce(0, (acc, (x, _)) => min(x, acc));
+          let minY = coords->reduce(0, (acc, (_, y)) => min(y, acc));
+
+          let xCorrection = minX < 0 ? - minX : 0;
+          let yCorrection = minY < 0 ? - minY : 0;
+
+          coords
+          ->map(((x, y)) => (x + xCorrection, y + yCorrection))
+          ->map(coordsToindex);
+        })
       ->Belt.Set.fromArray(~id=(module BlahComp))
       ->Belt_Set.toArray;
     let orientations =
       combined->map(orientation =>
         orientation->map(index => indexToCoords(index))
       );
+
+    // Js.log(orientations);
 
     {orientations, shapeId: shape.id};
   });
@@ -76,33 +88,41 @@ let rec getAllPositions =
           opt.orientations
           ->map(coordinates => {
               let transformed =
-                freePlaces->map(place =>
-                  coordinates->map(coord =>
-                    addCoords(coord, indexToCoords(place))
-                  )
-                );
+                freePlaces->map(place => {
+                  let placeCoord = indexToCoords(place);
 
-              transformed->forEach(coords => {
-                let grid = coords->showCoords;
+                  let added =
+                    coordinates->map(coord => addCoords(coord, placeCoord));
 
-                Js.log(coords);
-                Js.log(grid);
-                Js.log();
-              });
+                  let grid = added->showCoords;
+                  // Js.log(coordinates);
+                  // Js.log(placeCoord);
+                  // Js.log(added);
+                  // Js.log(grid);
+                  // Js.log();
+                  added;
+                });
 
               let validMoves =
-                transformed->keep(coordindates =>
-                  coordindates->every(coord => {
-                    let (x, y) = coord;
-                    includes(freePlaces, coordsToindex(coord))
-                    && x > (-1)
-                    && x < 8
-                    && y > (-1)
-                    && y < 8;
-                  })
-                );
+                transformed->keep(coordindates => {
+                  let res =
+                    coordindates->every(coord => {
+                      let (x, y) = coord;
 
-              Js.log2("validMoves", validMoves);
+                      includes(freePlaces, coordsToindex(coord))
+                      && x > (-1)
+                      && x < 8
+                      && y > (-1)
+                      && y < 8;
+                    });
+                  if (!res) {
+                    Js.log(coordindates->map(coordsToindex));
+                    Js.log(freePlaces);
+                  };
+                  res;
+                });
+
+              // Js.log2("validMoves", validMoves);
 
               // Js.log(removeDuplicates->length);
 
