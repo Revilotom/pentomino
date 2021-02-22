@@ -23,7 +23,7 @@ let make =
   let highlightedIndexes =
     getRelativeIndexes(
       mousePos,
-      toCoords(selectedShape, orientation, flipped)->Belt_Set.toArray,
+      toCoords(selectedShape, orientation, flipped),
     );
 
   let placedCells: array(placedCells) =
@@ -31,12 +31,10 @@ let make =
     ->Belt.Array.map(placedShape =>
         getRelativeIndexes(
           placedShape.cell,
-          Belt_Set.toArray(
-            toCoords(
-              Some(placedShape),
-              placedShape.orientation,
-              placedShape.flipped,
-            ),
+          toCoords(
+            Some(placedShape),
+            placedShape.orientation,
+            placedShape.flipped,
           ),
         )
         ->Belt.Array.map(cell => {cell, shapeId: Some(placedShape.id)})

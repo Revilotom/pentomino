@@ -28,6 +28,24 @@ module BlahComp =
     };
   });
 
+let gridToPrint = range(0, 7)->map(row => range(row * 8, (row + 1) * 8 - 1));
+
+let showCoords = (coords: coords) =>
+  gridToPrint
+  ->map(row =>
+      row
+      ->map(cell =>
+          includes(centerCells, cell)
+            ? "O"
+            : coords
+              ->getBy(x => coordsToindex(x) === cell)
+              ->Belt_Option.isSome
+                ? "@" : "-"
+        )
+      ->joinWith("", x => x)
+    )
+  ->joinWith("\n", x => x);
+
 let getInitialOptions = () =>
   init->map(shape => {
     let rotations =
@@ -36,7 +54,6 @@ let getInitialOptions = () =>
       concat(rotations, rotations->map(x => {...x, flipped: true}))
       ->map(shape =>
           toCoords(Some(shape), shape.orientation, shape.flipped)
-          ->Belt_Set.toArray
           ->map(coordsToindex)
         )
       ->Belt.Set.fromArray(~id=(module BlahComp))
@@ -65,6 +82,14 @@ let rec getAllPositions =
                   )
                 );
 
+              transformed->forEach(coords => {
+                let grid = coords->showCoords;
+
+                Js.log(coords);
+                Js.log(grid);
+                Js.log();
+              });
+
               let validMoves =
                 transformed->keep(coordindates =>
                   coordindates->every(coord => {
@@ -76,6 +101,8 @@ let rec getAllPositions =
                     && y < 8;
                   })
                 );
+
+              Js.log2("validMoves", validMoves);
 
               // Js.log(removeDuplicates->length);
 

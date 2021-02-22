@@ -17,66 +17,33 @@ let addCoords = ((x1: int, y1: int), (x2: int, y2: int)) => (
   y1 + y2,
 );
 
-// let toCoords =
-//     (selectedShape: option(shape), orientation: int, flipped: bool) =>
-//   (
-//     switch (selectedShape) {
-//     | Some(selectedShape) =>
-//       switch (selectedShape.id) {
-//       | F => ([|(1, 0), (0, 1), (1, 1), (2, 1), (0, 2)|], (0, 0))
-//       | I => ([|(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)|], (0, 0))
-//       | L => ([|(0, 0), (1, 0), (1, 1), (1, 2), (1, 3)|], (0, 0))
-//       | N => ([|(0, 0), (0, 1), (1, 1), (1, 2), (1, 3)|], (0, 0))
-//       | P => ([|(0, 0), (1, 0), (2, 0), (0, 1), (1, 1)|], (0, 0))
-//       | V => ([|(0, 2), (1, 2), (2, 2), (2, 0), (2, 1)|], (0, 0))
-//       | W => ([|(0, 2), (1, 2), (1, 1), (2, 0), (2, 1)|], (0, 0))
-//       | X => ([|(0, 1), (1, 0), (1, 1), (1, 2), (2, 1)|], (0, 0))
-//       | Y => ([|(1, 0), (1, 1), (1, 2), (1, 3), (0, 2)|], (0, 0))
-//       | T => ([|(0, 0), (0, 1), (0, 2), (1, 1), (2, 1)|], (0, 0))
-//       | U => ([|(0, 0), (1, 0), (1, 1), (1, 2), (0, 2)|], (0, 0))
-//       | Z => ([|(0, 0), (0, 1), (1, 1), (2, 1), (2, 2)|], (0, 0))
-//       }
-//     | None => ([||], (0, 0))
-//     }
-//   )
-//   |> (
-//     ((arr, translation)) =>
-//       arr
-//       |> Array.map(coord => addCoords(translation, coord))
-//       |> Array.map(coord => flipped ? flip(coord) : coord)
-//       |> Array.map(coord => applyRotation(coord, orientation))
-//       |> Belt_Set.fromArray(~id=(module PairComparator))
-//   );
-
 let toCoords =
     (selectedShape: option(shape), orientation: int, flipped: bool) =>
   (
     switch (selectedShape) {
     | Some(selectedShape) =>
       switch (selectedShape.id) {
-      | F => ([|(1, 0), (0, 1), (1, 1), (2, 1), (0, 2)|], ((-1), (-1)))
-      | I => ([|(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)|], ((-2), 0))
-      | L => ([|(0, 0), (1, 0), (1, 1), (1, 2), (1, 3)|], ((-1), (-1)))
-      | N => ([|(0, 0), (0, 1), (1, 1), (1, 2), (1, 3)|], ((-1), (-1)))
-      | P => ([|(0, 0), (1, 0), (2, 0), (0, 1), (1, 1)|], ((-1), 0))
-      | V => ([|(0, 2), (1, 2), (2, 2), (2, 0), (2, 1)|], ((-2), (-2)))
-      | W => ([|(0, 2), (1, 2), (1, 1), (2, 0), (2, 1)|], ((-1), (-1)))
-      | X => ([|(0, 1), (1, 0), (1, 1), (1, 2), (2, 1)|], ((-1), (-1)))
-      | Y => ([|(0, 0), (0, 1), (0, 2), (0, 3), ((-1), 2)|], (0, (-2)))
-      | T => ([|(0, 0), (0, 1), (0, 2), (1, 1), (2, 1)|], ((-1), (-1)))
-      | U => ([|(0, 0), (1, 0), (1, 1), (1, 2), (0, 2)|], ((-1), (-1)))
-      | Z => ([|(0, 0), (0, 1), (1, 1), (2, 1), (2, 2)|], ((-1), (-1)))
+      | F => [|(0, (-1)), ((-1), 0), (0, 0), (1, 0), ((-1), 1)|]
+      | I => [|((-2), 0), ((-1), 0), (0, 0), (1, 0), (2, 0)|]
+      | L => [|((-1), (-1)), (0, (-1)), (0, 0), (0, 1), (0, 2)|]
+      | N => [|((-1), (-1)), ((-1), 0), (0, 0), (0, 1), (0, 2)|]
+      | P => [|((-1), 0), (0, 0), (1, 0), ((-1), 1), (0, 1)|]
+      | V => [|((-2), 0), ((-1), 0), (0, 0), (0, (-2)), (0, (-1))|]
+      | W => [|((-1), 1), (0, 1), (0, 0), (1, (-1)), (1, 0)|]
+      | X => [|((-1), 0), (0, (-1)), (0, 0), (0, 1), (1, 0)|]
+      | Y => [|(0, (-2)), (0, (-1)), (0, 0), (0, 1), ((-1), 0)|]
+      | T => [|((-1), (-1)), ((-1), 0), ((-1), 1), (0, 0), ((-1), 0)|]
+      | U => [|((-1), (-1)), (0, (-1)), (0, 0), (0, 1), ((-1), 1)|]
+      | Z => [|((-1), (-1)), ((-1), 0), (0, 0), (1, 0), (1, 1)|]
       }
-    | None => ([||], (0, 0))
+    | None => [||]
     }
   )
   |> (
-    ((arr, translation)) =>
+    arr =>
       arr
-      |> Array.map(coord => addCoords(translation, coord))
       |> Array.map(coord => flipped ? flip(coord) : coord)
       |> Array.map(coord => applyRotation(coord, orientation))
-      |> Belt_Set.fromArray(~id=(module PairComparator))
   );
 
 let indexToCoords = (index: int) => (index / 8, index mod 8);
@@ -118,12 +85,10 @@ let getPlacedShapeAtCell = (cell: int, placedShapes: array(shape)) => {
   ->Belt.Array.keep(placedShape =>
       getRelativeIndexes(
         placedShape.cell,
-        Belt_Set.toArray(
-          toCoords(
-            Some(placedShape),
-            placedShape.orientation,
-            placedShape.flipped,
-          ),
+        toCoords(
+          Some(placedShape),
+          placedShape.orientation,
+          placedShape.flipped,
         ),
       )
       ->Belt.Array.some(index => index === cell)

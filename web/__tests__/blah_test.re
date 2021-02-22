@@ -14,36 +14,11 @@ describe("Initial options", () => {
 
       let allPositions = getAllPositions(getInitialOptions(), originalGrid);
 
-      let gridToPrint =
-        range(0, 7)->map(row => range(row * 8, (row + 1) * 8 - 1));
-
-      // Js.log(allPositions);
+      Js.log(allPositions);
 
       let s =
         allPositions
-        ->map(x =>
-            x.orientations
-            ->map(coords =>
-                gridToPrint
-                ->map(row =>
-                    row
-                    ->map(cell =>
-                        includes(centerCells, cell)
-                          ? "O"
-                          : coords
-                            ->getBy(x => coordsToindex(x) === cell)
-                            ->Belt_Option.isSome
-                              ? "@" : "-"
-                      )
-                    // string_of_int(cell)->String.length === 1
-                    //     ? "  " ++ string_of_int(cell)
-                    //     : "  " ++ string_of_int(cell)
-                    ->joinWith("", x => x)
-                  )
-                ->joinWith("\n", x => x)
-              )
-            ->joinWith("\n\n", x => x)
-          )
+        ->map(x => x.orientations->map(showCoords)->joinWith("\n\n", x => x))
         ->joinWith("\n", x => x);
 
       // Js.log(s);
