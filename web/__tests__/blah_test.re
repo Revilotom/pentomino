@@ -24,7 +24,29 @@ describe("Initial options", () => {
     ->reduce(0, (acc, curr) => acc + curr);
 
   Expect.(
-    test("toBe", () => {
+    test("orientations", () => {
+      expect(
+        opts->map(x => (shapeToString(x.shapeId), length(x.orientations))),
+      )
+      |> toEqual([|
+           ("F", 8),
+           ("I", 2),
+           ("L", 8),
+           ("N", 8),
+           ("P", 8),
+           ("V", 4),
+           ("W", 4),
+           ("X", 1),
+           ("Y", 8),
+           ("Z", 4),
+           ("U", 4),
+           ("T", 4),
+         |])
+    })
+  );
+
+  Expect.(
+    test("places", () => {
       expect(shapesToPlaces)
       |> toEqual([|
            ("F", 192),
@@ -43,44 +65,9 @@ describe("Initial options", () => {
     })
   );
 
-  Expect.(test("toBe", () => {
-            expect(totalPlaces) |> toEqual(1568)
-          }));
-
   Expect.(
-    test("toBe", () => {
-      let s =
-        allPositions
-        ->map(x => x.orientations->map(showCoords)->joinWith("\n\n", x => x))
-        ->joinWith("\n", x => x);
-
-      // Js.log("start");
-
-      // Js.log(s);
-
-      // Js.log(
-      //   opts
-      //   ->map(x => x.orientations->map(showCoords)->joinWith("\n\n", x => x))
-      //   ->joinWith("\n", x => x),
-      // );
-
-      expect(
-        opts->map(x => (shapeToString(x.shapeId), length(x.orientations))),
-      )
-      |> toEqual([|
-           ("F", 8),
-           ("I", 2),
-           ("L", 8),
-           ("N", 8),
-           ("P", 8),
-           ("V", 4),
-           ("W", 4),
-           ("X", 1),
-           ("Y", 8),
-           ("Z", 4),
-           ("U", 4),
-           ("T", 4),
-         |]);
+    test("total places", () => {
+      expect(totalPlaces) |> toEqual(1568)
     })
   );
 });
