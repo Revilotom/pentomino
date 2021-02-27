@@ -24,9 +24,7 @@ describe("solver", () => {
 
   Expect.(
     test("get smallest col x", () => {
-      let x = makeX();
-
-      expect(x->getSmallestCol) |> toEqual(Some([|"A", "B"|]));
+      expect(x->getSmallestCol) |> toEqual(Some([|"A", "B"|]))
     })
   );
 
@@ -37,6 +35,33 @@ describe("solver", () => {
         ->Belt_MapInt.fromArray;
 
       expect(x1->getSmallestCol) |> toEqual(Some([|"A", "B", "C"|]));
+    })
+  );
+
+  Expect.(
+    test("Select - selected", () => {
+      let (selected, newColumns) = select("A", y, x);
+
+      expect(selected)
+      |> toEqual([|
+           [|"A", "B"|],
+           [|"A", "B", "C"|],
+           [|"A", "C", "E", "F"|],
+         |]);
+    })
+  );
+
+  Expect.(
+    test("Select - selected", () => {
+      let (selected, newColumns) = select("A", y, x);
+
+      expect(newColumns->Belt_Option.getUnsafe->Belt_MapInt.toArray)
+      |> toEqual([|
+           (2, [||]),
+           (3, [|"D"|]),
+           (5, [|"D"|]),
+           (6, [|"D"|]),
+         |]);
     })
   );
 });

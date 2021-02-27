@@ -53,6 +53,8 @@ let makeX = () => {
   ->Belt_MapInt.fromArray;
 };
 
+let x = makeX();
+
 let getSmallestCol = (columns: columns) =>
   columns
   ->Belt_MapInt.map(Belt_Array.length)
