@@ -66,6 +66,8 @@ describe("Initial options", () => {
         ->map(x => x.orientations->map(showCoords)->joinWith("\n\n", x => x))
         ->joinWith("\n", x => x);
 
+      Js.log("start");
+
       // Js.log(s);
 
       // Js.log(
