@@ -24,18 +24,6 @@ describe("Initial options", () => {
     ->reduce(0, (acc, curr) => acc + curr);
 
   Expect.(
-    test("add coords y overflow", () => {
-      expect(addCoords((0, 7), (0, 1))) |> toEqual((1, 0))
-    })
-  );
-
-  Expect.(
-    test("add coords x overflow", () => {
-      expect(addCoords((7, 0), (1, 0))) |> toEqual((0, 0))
-    })
-  );
-
-  Expect.(
     test("toBe", () => {
       expect(shapesToPlaces)
       |> toEqual([|
@@ -66,7 +54,7 @@ describe("Initial options", () => {
         ->map(x => x.orientations->map(showCoords)->joinWith("\n\n", x => x))
         ->joinWith("\n", x => x);
 
-      Js.log("start");
+      // Js.log("start");
 
       // Js.log(s);
 

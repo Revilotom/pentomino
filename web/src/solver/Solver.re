@@ -98,8 +98,7 @@ let rec getAllPositions =
                     coordinates->map(coord => addCoords(coord, placeCoord));
 
                   // if (placeCoord == (4, 4)) {
-                  //   Js.log(added);
-                  //   Js.log(showCoords(added));
+
                   // };
 
                   // Js.log(coordinates);
@@ -123,6 +122,10 @@ let rec getAllPositions =
                       && y > (-1)
                       && y < 8;
                     });
+
+                  // if (res) {
+                  //   Js.log(showCoords(coordindates));
+                  // };
 
                   res;
                 });
