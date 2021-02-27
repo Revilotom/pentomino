@@ -1,10 +1,8 @@
 open Jest;
-open Solver;
+open MoveGenerator;
 open GridUtils;
 
 open ShapeSelector;
-
-open Constants;
 
 open Belt_Array;
 
