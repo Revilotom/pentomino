@@ -9,6 +9,20 @@ open Constants;
 open Belt_Array;
 
 describe("Initial options", () => {
+  let opts = getInitialOptions();
+
+  let allPositions = getAllPositions(opts, range(0, 63), centerCells);
+
+  let shapesToPlaces =
+    allPositions->map(x =>
+      (shapeToString(x.shapeId), x.orientations->length)
+    );
+
+  let totalPlaces =
+    allPositions
+    ->map(x => x.orientations->length)
+    ->reduce(0, (acc, curr) => acc + curr);
+
   Expect.(
     test("add coords y overflow", () => {
       expect(addCoords((0, 7), (0, 1))) |> toEqual((1, 0))
@@ -23,57 +37,60 @@ describe("Initial options", () => {
 
   Expect.(
     test("toBe", () => {
-      let opts = getInitialOptions();
-      let originalGrid = range(0, 63);
+      expect(shapesToPlaces)
+      |> toEqual([|
+           ("F", 192),
+           ("I", 48),
+           ("L", 184),
+           ("N", 184),
+           ("P", 248),
+           ("V", 96),
+           ("W", 96),
+           ("X", 24),
+           ("Y", 184),
+           ("Z", 96),
+           ("U", 120),
+           ("T", 96),
+         |])
+    })
+  );
 
-      let allPositions =
-        getAllPositions(getInitialOptions(), originalGrid, centerCells);
+  Expect.(test("toBe", () => {
+            expect(totalPlaces) |> toEqual(1568)
+          }));
 
-      // Js.log(
-      //   getInitialOptions()
-      //   ->map(x => x.orientations)
-      //   ->flatten
-      //   ->map(showCoords)
-      //   ->joinWith("\n\n", x => x),
-      // );
-
-      // let ucords =
-      //   toCoords(Some(init[0]), 0, false)->map(c => addCoords(c, (0, 0)));
-
-      // Js.log(ucords);
-      // Js.log(ucords->map(coordsToindex)->map(indexToCoords));
-
-      // Js.log(ucords->showCoords);
-
-      // Js.log(allPositions);
-
+  Expect.(
+    test("toBe", () => {
       let s =
         allPositions
         ->map(x => x.orientations->map(showCoords)->joinWith("\n\n", x => x))
         ->joinWith("\n", x => x);
 
-      Js.log(s);
+      // Js.log(s);
 
-      // Js.log(s
-      //   allPositions->map(x =>
-      //     x.orientations->map(y => y->map(z => z->coordsToString))
-      //   ),
+      // Js.log(
+      //   opts
+      //   ->map(x => x.orientations->map(showCoords)->joinWith("\n\n", x => x))
+      //   ->joinWith("\n", x => x),
       // );
 
-      Js.log(
-        allPositions->map(x =>
-          (shapeToString(x.shapeId), x.orientations->length)
-        ),
-      );
-
-      Js.log(
-        allPositions
-        ->map(x => x.orientations->length)
-        ->reduce(0, (acc, curr) => acc + curr),
-      );
-
-      expect(opts->map(x => length(x.orientations)))
-      |> toEqual([|8, 2, 8, 8, 8, 4, 4, 1, 8, 4, 4, 4|]);
+      expect(
+        opts->map(x => (shapeToString(x.shapeId), length(x.orientations))),
+      )
+      |> toEqual([|
+           ("F", 8),
+           ("I", 2),
+           ("L", 8),
+           ("N", 8),
+           ("P", 8),
+           ("V", 4),
+           ("W", 4),
+           ("X", 1),
+           ("Y", 8),
+           ("Z", 4),
+           ("U", 4),
+           ("T", 4),
+         |]);
     })
   );
 });

@@ -56,6 +56,7 @@ let getInitialOptions = () =>
       ->map(shape => {
           let coords =
             toCoords(Some(shape), shape.orientation, shape.flipped);
+
           let minX = coords->reduce(0, (acc, (x, _)) => min(x, acc));
           let minY = coords->reduce(0, (acc, (_, y)) => min(y, acc));
           let xCorrection = minX < 0 ? - minX : 0;
