@@ -69,25 +69,22 @@ let getSmallestCol = (columns: columns) =>
   ->Belt_Option.flatMap(((k, _)) => columns->Belt_MapInt.get(k));
 
 let select = (rts: string, rows: rows, columns: columns) => {
-  let cols = rows->Belt_MapString.get(rts);
+  let cols = rows->Belt_MapString.get(rts)->Belt_Option.getWithDefault([||]);
 
   let selected =
-    cols
-    ->Belt_Option.map(cls =>
-        cls->Belt_Array.map(c =>
-          columns->Belt_MapInt.get(c)->Belt_Option.getWithDefault([||])
-        )
-      )
-    ->Belt_Option.getWithDefault([||]);
+    cols->Belt_Array.map(c =>
+      (c, columns->Belt_MapInt.get(c)->Belt_Option.getWithDefault([||]))
+    );
 
   let newColumns =
-    cols->Belt_Option.map(cls =>
-      columns
-      ->Belt_MapInt.removeMany(cls)
-      ->Belt_MapInt.map(row =>
-          row->Belt_Array.keep(c => !selected->flatten->includes(c))
+    columns
+    ->Belt_MapInt.removeMany(cols)
+    ->Belt_MapInt.map(row =>
+        row->Belt_Array.keep(c =>
+          !selected->Belt_Array.map(((_, cs)) => cs)->flatten->includes(c)
         )
-    );
+      );
+
   (selected, newColumns);
 };
 

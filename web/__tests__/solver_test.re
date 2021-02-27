@@ -40,21 +40,20 @@ describe("solver", () => {
 
   Expect.(
     test("Select - selected", () => {
-      let (selected, newColumns) = select("A", y, x);
+      let (selected, _) = select("A", y, x);
 
       expect(selected)
       |> toEqual([|
-           [|"A", "B"|],
-           [|"A", "B", "C"|],
-           [|"A", "C", "E", "F"|],
+           (1, [|"A", "B"|]),
+           (4, [|"A", "B", "C"|]),
+           (7, [|"A", "C", "E", "F"|]),
          |]);
     })
   );
 
   Expect.(
-    test("Select - selected", () => {
-      let (selected, newColumns) = select("A", y, x);
-
+    test("Select - newColumns", () => {
+      let (_, newColumns) = select("A", y, x);
       expect(newColumns->Belt_Option.getUnsafe->Belt_MapInt.toArray)
       |> toEqual([|
            (2, [||]),
