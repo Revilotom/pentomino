@@ -34,7 +34,6 @@ let makeX = () => {
     ->flatten
     ->Belt_Set.fromArray(~id=(module IntCmp))
     ->Belt_Set.toArray;
-
   values
   ->Belt_Array.map(v =>
       (
@@ -50,4 +49,22 @@ let makeX = () => {
   ->Belt_MapInt.fromArray;
 };
 
-// let solve = (rows: ) => {
+let getSmallestCol = (columns: Belt_MapInt.t(array(Belt_MapString.key))) =>
+  columns
+  ->Belt_MapInt.map(Belt_Array.length)
+  ->Belt_MapInt.reduce(None, (acc, curK, curV) =>
+      acc->Belt_Option.isNone
+        ? Some((curK, curV))
+        : acc->Belt_Option.map(v => {
+            let (_, accV) = v;
+            curV < accV ? (curK, curV) : v;
+          })
+    );
+
+let solve =
+    (
+      rows: Belt_MapString.t(array(int)),
+      columns: Belt_MapInt.t(array(Belt_MapString.key)),
+    ) => {
+  ();
+};
