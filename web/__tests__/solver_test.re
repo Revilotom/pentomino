@@ -39,28 +39,21 @@ describe("solver", () => {
   );
 
   Expect.(
-    test("Select - selected", () => {
-      let (selected, _) = select("A", y, x);
-
-      expect(selected)
-      |> toEqual([|
-           (1, [|"A", "B"|]),
-           (4, [|"A", "B", "C"|]),
-           (7, [|"A", "C", "E", "F"|]),
-         |]);
-    })
-  );
-
-  Expect.(
     test("Select - newColumns", () => {
-      let (_, newColumns) = select("A", y, x);
-      expect(newColumns->Belt_Option.getUnsafe->Belt_MapInt.toArray)
+      let newColumns = select("A", y, x);
+      expect(newColumns->Belt_MapInt.toArray)
       |> toEqual([|
            (2, [||]),
            (3, [|"D"|]),
            (5, [|"D"|]),
            (6, [|"D"|]),
          |]);
+    })
+  );
+
+  Expect.(
+    test("Solve ", () => {
+      expect(solve(y, x, [||])) |> toEqual([|"B", "D", "F"|])
     })
   );
 });

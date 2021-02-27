@@ -76,19 +76,26 @@ let select = (rts: string, rows: rows, columns: columns) => {
       (c, columns->Belt_MapInt.get(c)->Belt_Option.getWithDefault([||]))
     );
 
-  let newColumns =
-    columns
-    ->Belt_MapInt.removeMany(cols)
-    ->Belt_MapInt.map(row =>
-        row->Belt_Array.keep(c =>
-          !selected->Belt_Array.map(((_, cs)) => cs)->flatten->includes(c)
-        )
-      );
-
-  (selected, newColumns);
+  columns
+  ->Belt_MapInt.removeMany(cols)
+  ->Belt_MapInt.map(row =>
+      row->Belt_Array.keep(c =>
+        !selected->Belt_Array.map(((_, cs)) => cs)->flatten->includes(c)
+      )
+    );
 };
 
-let solve = (rows: rows, columns: columns) => {
-  let smallestCol = getSmallestCol(columns);
-  ();
-};
+let rec solve = (rows: rows, columns: columns, solution: array(string)) =>
+  if (columns->Belt_MapInt.size === 0) {
+    solution;
+  } else {
+    let smallestCol =
+      getSmallestCol(columns)->Belt_Option.getWithDefault([||]);
+    smallestCol
+    ->Belt_Array.map(r => {
+        let newSolution = solution->Belt_Array.concat([|r|]);
+        let newColumns = select(r, rows, columns);
+        solve(rows, newColumns, newSolution);
+      })
+    ->flatten;
+  };
