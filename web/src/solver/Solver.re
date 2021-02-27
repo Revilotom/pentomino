@@ -78,46 +78,35 @@ let getAllPositions =
       options: array(moveOption),
       allPlaces: array(int),
       takenPlaces: array(int),
-    ) => {
-  let blah =
-    options->map(opt =>
-      {
-        ...opt,
-        orientations:
-          opt.orientations
-          ->map(coordinates => {
-              let transformed =
-                allPlaces->map(place =>
-                  coordinates->map(coord =>
-                    addCoords(coord, place->indexToCoords)
-                  )
-                );
-
-              let validMoves =
-                transformed->keep(coordindates =>
-                  coordindates->every(coord => {
-                    let (x, y) = coord;
-                    includes(allPlaces, coordsToindex(coord))
-                    && !includes(takenPlaces, coordsToindex(coord))
-                    && x > (-1)
-                    && x < 8
-                    && y > (-1)
-                    && y < 8;
-                  })
-                );
-
-              validMoves;
-            })
-          ->flatten
-          ->map(orientation =>
-              orientation->map(coord => coordsToindex(coord))
-            )
-          ->Belt.Set.fromArray(~id=(module BlahComp))
-          ->Belt_Set.toArray
-          ->map(orientation =>
-              orientation->map(index => indexToCoords(index))
-            ),
-      }
-    );
-  blah;
-};
+    ) =>
+  options->map(opt =>
+    {
+      ...opt,
+      orientations:
+        opt.orientations
+        ->map(coordinates =>
+            allPlaces
+            ->map(place =>
+                coordinates->map(coord =>
+                  addCoords(coord, place->indexToCoords)
+                )
+              )
+            ->keep(coordindates =>
+                coordindates->every(coord => {
+                  let (x, y) = coord;
+                  includes(allPlaces, coordsToindex(coord))
+                  && !includes(takenPlaces, coordsToindex(coord))
+                  && x > (-1)
+                  && x < 8
+                  && y > (-1)
+                  && y < 8;
+                })
+              )
+          )
+        ->flatten
+        ->map(orientation => orientation->map(coord => coordsToindex(coord)))
+        ->Belt.Set.fromArray(~id=(module BlahComp))
+        ->Belt_Set.toArray
+        ->map(orientation => orientation->map(index => indexToCoords(index))),
+    }
+  );
