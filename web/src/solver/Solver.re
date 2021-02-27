@@ -4,6 +4,10 @@ open GridUtils;
 
 open Constants;
 
+type columns = Belt_MapInt.t(array(Belt_MapString.key));
+
+type rows = Belt_MapString.t(array(int));
+
 module IntCmp =
   Belt.Id.MakeComparable({
     type t = int;
@@ -49,7 +53,7 @@ let makeX = () => {
   ->Belt_MapInt.fromArray;
 };
 
-let getSmallestCol = (columns: Belt_MapInt.t(array(Belt_MapString.key))) =>
+let getSmallestCol = (columns: columns) =>
   columns
   ->Belt_MapInt.map(Belt_Array.length)
   ->Belt_MapInt.reduce(None, (acc, curK, curV) =>
@@ -59,12 +63,10 @@ let getSmallestCol = (columns: Belt_MapInt.t(array(Belt_MapString.key))) =>
             let (_, accV) = v;
             curV < accV ? (curK, curV) : v;
           })
-    );
+    )
+  ->Belt_Option.flatMap(((k, _)) => columns->Belt_MapInt.get(k));
 
-let solve =
-    (
-      rows: Belt_MapString.t(array(int)),
-      columns: Belt_MapInt.t(array(Belt_MapString.key)),
-    ) => {
+let solve = (rows: rows, columns: columns) => {
+  let smallestCol = getSmallestCol(columns);
   ();
 };

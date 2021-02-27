@@ -26,11 +26,7 @@ describe("solver", () => {
     test("get smallest col x", () => {
       let x = makeX();
 
-      let x1 =
-        [|(4, [|"A", "B", "C"|]), (7, [|"A", "C", "E", "F"|])|]
-        ->Belt_MapInt.fromArray;
-
-      expect(x->getSmallestCol) |> toEqual(Some((1, 2)));
+      expect(x->getSmallestCol) |> toEqual(Some([|"A", "B"|]));
     })
   );
 
@@ -40,7 +36,7 @@ describe("solver", () => {
         [|(4, [|"A", "B", "C"|]), (7, [|"A", "C", "E", "F"|])|]
         ->Belt_MapInt.fromArray;
 
-      expect(x1->getSmallestCol) |> toEqual(Some((4, 3)));
+      expect(x1->getSmallestCol) |> toEqual(Some([|"A", "B", "C"|]));
     })
   );
 });
