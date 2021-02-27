@@ -9,8 +9,8 @@ open Belt_Array;
 type coords = array((int, int));
 
 type moveOption = {
-  shapeId,
-  orientations: array(coords),
+  shape,
+  positions: array(coords),
 };
 
 module BlahComp =
@@ -70,7 +70,7 @@ let getInitialOptions = () =>
       combined->map(orientation =>
         orientation->map(index => indexToCoords(index))
       );
-    {orientations, shapeId: shape.id};
+    {positions: orientations, shape};
   });
 
 let getAllPositions =
@@ -82,8 +82,8 @@ let getAllPositions =
   options->map(opt =>
     {
       ...opt,
-      orientations:
-        opt.orientations
+      positions:
+        opt.positions
         ->map(coordinates =>
             allPlaces
             ->map(place =>
@@ -110,3 +110,6 @@ let getAllPositions =
         ->map(orientation => orientation->map(index => indexToCoords(index))),
     }
   );
+
+let allPositions =
+  getAllPositions(getInitialOptions(), range(0, 63), centerCells);

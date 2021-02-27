@@ -9,22 +9,18 @@ open Belt_Array;
 describe("Initial options", () => {
   let opts = getInitialOptions();
 
-  let allPositions = getAllPositions(opts, range(0, 63), centerCells);
-
   let shapesToPlaces =
-    allPositions->map(x =>
-      (shapeToString(x.shapeId), x.orientations->length)
-    );
+    allPositions->map(x => (shapeToString(x.shape.id), x.positions->length));
 
   let totalPlaces =
     allPositions
-    ->map(x => x.orientations->length)
+    ->map(x => x.positions->length)
     ->reduce(0, (acc, curr) => acc + curr);
 
   Expect.(
     test("orientations", () => {
       expect(
-        opts->map(x => (shapeToString(x.shapeId), length(x.orientations))),
+        opts->map(x => (shapeToString(x.shape.id), length(x.positions))),
       )
       |> toEqual([|
            ("F", 8),

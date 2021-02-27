@@ -3,13 +3,26 @@ open Solver;
 open GridUtils;
 
 open ShapeSelector;
+open MoveGenerator;
 
 open Belt_Array;
 
 describe("solver", () => {
+  let y =
+    Belt_MapString.fromArray([|
+      ("A", [|1, 4, 7|]),
+      ("B", [|1, 4|]),
+      ("C", [|4, 5, 7|]),
+      ("D", [|3, 5, 6|]),
+      ("E", [|2, 3, 6, 7|]),
+      ("F", [|2, 7|]),
+    |]);
+
+  let x = makeColumns(y);
+
   Expect.(
     test("make x", () => {
-      expect(makeX()->Belt_MapInt.toArray)
+      expect(x->Belt_MapInt.toArray)
       |> toEqual([|
            (1, [|"A", "B"|]),
            (2, [|"E", "F"|]),
@@ -54,6 +67,14 @@ describe("solver", () => {
   Expect.(
     test("Solve ", () => {
       expect(solve(y, x, [||])) |> toEqual([|"B", "D", "F"|])
+    })
+  );
+
+  Expect.(
+    test("Solve Pentomino ", () => {
+      let rows = allPositions->map(p => [|p.shape.id|]);
+
+      expect(solve(y, x, [||])) |> toEqual([|"B", "D", "F"|]);
     })
   );
 });

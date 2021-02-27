@@ -20,20 +20,10 @@ module StrCmp =
     let cmp = Pervasives.compare;
   });
 
-let y =
-  Belt_MapString.fromArray([|
-    ("A", [|1, 4, 7|]),
-    ("B", [|1, 4|]),
-    ("C", [|4, 5, 7|]),
-    ("D", [|3, 5, 6|]),
-    ("E", [|2, 3, 6, 7|]),
-    ("F", [|2, 7|]),
-  |]);
-
-let makeX = () => {
-  let keys = y->Belt_MapString.keysToArray;
+let makeColumns = (rows: rows) => {
+  let keys = rows->Belt_MapString.keysToArray;
   let values =
-    y
+    rows
     ->Belt_MapString.valuesToArray
     ->flatten
     ->Belt_Set.fromArray(~id=(module IntCmp))
@@ -43,7 +33,7 @@ let makeX = () => {
       (
         v,
         keys->Belt_Array.keep(k =>
-          y
+          rows
           ->Belt_MapString.get(k)
           ->Belt_Option.getWithDefault([||])
           ->includes(v)
@@ -52,8 +42,6 @@ let makeX = () => {
     )
   ->Belt_MapInt.fromArray;
 };
-
-let x = makeX();
 
 let getSmallestCol = (columns: columns) =>
   columns
