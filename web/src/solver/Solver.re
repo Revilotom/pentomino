@@ -58,10 +58,8 @@ let getInitialOptions = () =>
             toCoords(Some(shape), shape.orientation, shape.flipped);
           let minX = coords->reduce(0, (acc, (x, _)) => min(x, acc));
           let minY = coords->reduce(0, (acc, (_, y)) => min(y, acc));
-
           let xCorrection = minX < 0 ? - minX : 0;
           let yCorrection = minY < 0 ? - minY : 0;
-
           coords
           ->map(((x, y)) => (x + xCorrection, y + yCorrection))
           ->map(coordsToindex);
@@ -79,7 +77,11 @@ let getInitialOptions = () =>
   });
 
 let rec getAllPositions =
-        (options: array(moveOption), freePlaces: array(int)) => {
+        (
+          options: array(moveOption),
+          allPlaces: array(int),
+          takenPlaces: array(int),
+        ) => {
   let blah =
     options->map(opt =>
       {
@@ -88,13 +90,17 @@ let rec getAllPositions =
           opt.orientations
           ->map(coordinates => {
               let transformed =
-                freePlaces->map(place => {
+                allPlaces->map(place => {
                   let placeCoord = indexToCoords(place);
 
                   let added =
                     coordinates->map(coord => addCoords(coord, placeCoord));
 
-                  let grid = added->showCoords;
+                  // if (placeCoord == (4, 4)) {
+                  //   Js.log(added);
+                  //   Js.log(showCoords(added));
+                  // };
+
                   // Js.log(coordinates);
                   // Js.log(placeCoord);
                   // Js.log(added);
@@ -109,16 +115,14 @@ let rec getAllPositions =
                     coordindates->every(coord => {
                       let (x, y) = coord;
 
-                      includes(freePlaces, coordsToindex(coord))
+                      includes(allPlaces, coordsToindex(coord))
+                      && !includes(takenPlaces, coordsToindex(coord))
                       && x > (-1)
                       && x < 8
                       && y > (-1)
                       && y < 8;
                     });
-                  if (!res) {
-                    Js.log(coordindates->map(coordsToindex));
-                    Js.log(freePlaces);
-                  };
+
                   res;
                 });
 

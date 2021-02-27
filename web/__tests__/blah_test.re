@@ -24,9 +24,10 @@ describe("Initial options", () => {
   Expect.(
     test("toBe", () => {
       let opts = getInitialOptions();
-      let originalGrid = range(0, 63)->keep(x => !includes(centerCells, x));
+      let originalGrid = range(0, 63);
 
-      let allPositions = getAllPositions(getInitialOptions(), originalGrid);
+      let allPositions =
+        getAllPositions(getInitialOptions(), originalGrid, centerCells);
 
       // Js.log(
       //   getInitialOptions()
@@ -46,12 +47,13 @@ describe("Initial options", () => {
 
       // Js.log(allPositions);
 
-      // let s =
-      //   allPositions
-      //   ->map(x => x.orientations->map(showCoords)->joinWith("\n\n", x => x))
-      //   ->joinWith("\n", x => x);
+      let s =
+        allPositions
+        ->map(x => x.orientations->map(showCoords)->joinWith("\n\n", x => x))
+        ->joinWith("\n", x => x);
 
-      // Js.log(s);
+      Js.log(s);
+
       // Js.log(s
       //   allPositions->map(x =>
       //     x.orientations->map(y => y->map(z => z->coordsToString))
@@ -64,11 +66,11 @@ describe("Initial options", () => {
         ),
       );
 
-      // Js.log(
-      //   allPositions
-      //   ->map(x => x.orientations->length)
-      //   ->reduce(0, (acc, curr) => acc + curr),
-      // );
+      Js.log(
+        allPositions
+        ->map(x => x.orientations->length)
+        ->reduce(0, (acc, curr) => acc + curr),
+      );
 
       expect(opts->map(x => length(x.orientations)))
       |> toEqual([|8, 2, 8, 8, 8, 4, 4, 1, 8, 4, 4, 4|]);
