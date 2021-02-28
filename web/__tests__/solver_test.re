@@ -72,9 +72,30 @@ describe("solver", () => {
 
   Expect.(
     test("Solve Pentomino ", () => {
-      let rows = allPositions->map(p => [|p.shape.id|]);
+      let rows =
+        allPositions
+        ->map(p => {
+            p.positions
+            ->map(pos =>
+                (
+                  shapeToString(p.shape.id)
+                  ++ "-"
+                  ++ pos
+                     ->map(coordsToindex)
+                     ->map(string_of_int)
+                     ->joinWith("-", a => a),
+                  pos->map(coordsToindex),
+                )
+              )
+          })
+        ->flatten
+        ->Belt_MapString.fromArray;
 
-      expect(solve(y, x, [||])) |> toEqual([|"B", "D", "F"|]);
+      let columns = makeColumns(rows);
+
+      // expect(rows->Belt_MapString.valuesToArray) |> toEqual([||]);
+      // expect(columns->Belt_MapInt.keysToArray) |> toEqual([||]);
+      expect(solve(rows, columns)) |> toEqual([||]);
     })
   );
 });

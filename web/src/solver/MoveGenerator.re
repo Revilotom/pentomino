@@ -52,9 +52,8 @@ let getInitialOptions = () =>
       make(4, shape)->mapWithIndex((i, x) => {...x, orientation: i * 90});
     let combined =
       concat(rotations, rotations->map(x => {...x, flipped: true}))
-      ->map(shape => {
-          let coords =
-            toCoords(Some(shape), shape.orientation, shape.flipped);
+      ->map(s => {
+          let coords = toCoords(Some(s), s.orientation, s.flipped);
 
           let minX = coords->reduce(0, (acc, (x, _)) => min(x, acc));
           let minY = coords->reduce(0, (acc, (_, y)) => min(y, acc));

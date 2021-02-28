@@ -73,7 +73,8 @@ let select = (rts: string, rows: rows, columns: columns) => {
     );
 };
 
-let rec solve = (rows: rows, columns: columns, solution: array(string)) =>
+let rec solveHelper = (rows: rows, columns: columns, solution: array(string)) => {
+  Js.log(columns->Belt_MapInt.size);
   if (columns->Belt_MapInt.size === 0) {
     solution;
   } else {
@@ -83,7 +84,11 @@ let rec solve = (rows: rows, columns: columns, solution: array(string)) =>
     ->Belt_Array.map(r => {
         let newSolution = solution->Belt_Array.concat([|r|]);
         let newColumns = select(r, rows, columns);
-        solve(rows, newColumns, newSolution);
+        solveHelper(rows, newColumns, newSolution);
       })
     ->flatten;
   };
+};
+
+let solve = (rows: rows, columns: columns) =>
+  solveHelper(rows, columns, [||]);
