@@ -60,22 +60,25 @@ let select = (rts: string, rows: rows, columns: columns) => {
   let cols = rows->Belt_MapString.get(rts)->Belt_Option.getWithDefault([||]);
 
   let selected =
-    cols->Belt_Array.map(c =>
-      (c, columns->Belt_MapInt.get(c)->Belt_Option.getWithDefault([||]))
-    );
+    cols
+    ->Belt_Array.map(c =>
+        columns->Belt_MapInt.get(c)->Belt_Option.getWithDefault([||])
+      )
+    ->flatten;
 
   columns
   ->Belt_MapInt.removeMany(cols)
-  ->Belt_MapInt.map(row =>
-      row->Belt_Array.keep(c =>
-        !selected->Belt_Array.map(((_, cs)) => cs)->flatten->includes(c)
-      )
-    );
+  ->Belt_MapInt.map(row => row->Belt_Array.keep(c => !selected->includes(c)));
 };
 
-let rec solveHelper = (rows: rows, columns: columns, solution: array(string)) => {
-  Js.log(columns->Belt_MapInt.size);
+let rec solveHelper = (rows: rows, columns: columns, solution: array(string)) =>
+  // Js.log(columns->Belt_MapInt.toArray);
   if (columns->Belt_MapInt.size === 0) {
+    Js.log("solution");
+    Js.log(solution);
+
+    raise(Not_found);
+
     solution;
   } else {
     let smallestCol =
@@ -88,7 +91,6 @@ let rec solveHelper = (rows: rows, columns: columns, solution: array(string)) =>
       })
     ->flatten;
   };
-};
 
 let solve = (rows: rows, columns: columns) =>
   solveHelper(rows, columns, [||]);

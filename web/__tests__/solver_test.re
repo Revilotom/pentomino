@@ -63,36 +63,46 @@ describe("solver", () => {
          |]);
     })
   );
-
-  Expect.(
-    test("Solve ", () => {
-      expect(solve(y, x, [||])) |> toEqual([|"B", "D", "F"|])
-    })
-  );
-
+  // Expect.(
+  //   test("Solve ", () => {
+  //     expect(solve(y, x)) |> toEqual([|"B", "D", "F"|])
+  //   })
+  // );
+  // Expect.(
+  //   test("Solve matrix with 3 solutions", () => {
+  //     let rows =
+  //       Belt_MapString.fromArray([|
+  //         ("A", [|1|]),
+  //         ("B", [|2, 3|]),
+  //         ("C", [|1, 4|]),
+  //         ("D", [|3, 4|]),
+  //         ("E", [|2|]),
+  //         ("F", [|3|]),
+  //       |]);
+  //     expect(solve(rows, makeColumns(rows))) |> toEqual([||]);
+  //   })
+  // );
   Expect.(
     test("Solve Pentomino ", () => {
       let rows =
         allPositions
-        ->map(p => {
-            p.positions
+        ->mapWithIndex((i, shape) => {
+            shape.positions
             ->map(pos =>
                 (
-                  shapeToString(p.shape.id)
+                  shapeToString(shape.shape.id)
                   ++ "-"
                   ++ pos
                      ->map(coordsToindex)
                      ->map(string_of_int)
                      ->joinWith("-", a => a),
-                  pos->map(coordsToindex),
+                  pos->map(coordsToindex)->concat([|100 + i|]),
                 )
               )
           })
         ->flatten
         ->Belt_MapString.fromArray;
-
       let columns = makeColumns(rows);
-
       // expect(rows->Belt_MapString.valuesToArray) |> toEqual([||]);
       // expect(columns->Belt_MapInt.keysToArray) |> toEqual([||]);
       expect(solve(rows, columns)) |> toEqual([||]);
