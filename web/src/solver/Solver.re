@@ -4,7 +4,9 @@ open GridUtils;
 
 open Constants;
 
-type map = Belt_MapString.t(array(string));
+type map = Belt_MapString.t(Belt_SetString.t);
+
+let emptySet = [||]->Belt_SetString.fromArray;
 
 module IntCmp =
   Belt.Id.MakeComparable({
@@ -23,19 +25,22 @@ let makeColumns = (rows: map) => {
   let values =
     rows
     ->Belt_MapString.valuesToArray
+    ->Belt_Array.map(Belt_SetString.toArray)
     ->flatten
-    ->Belt_Set.fromArray(~id=(module StrCmp))
-    ->Belt_Set.toArray;
+    ->Belt_SetString.fromArray
+    ->Belt_SetString.toArray;
   values
   ->Belt_Array.map(v =>
       (
         v,
-        keys->Belt_Array.keep(k =>
-          rows
-          ->Belt_MapString.get(k)
-          ->Belt_Option.getWithDefault([||])
-          ->includes(v)
-        ),
+        keys
+        ->Belt_Array.keep(k =>
+            rows
+            ->Belt_MapString.get(k)
+            ->Belt_Option.getWithDefault(emptySet)
+            ->Belt_SetString.has(v)
+          )
+        ->Belt_SetString.fromArray,
       )
     )
   ->Belt_MapString.fromArray;
@@ -43,7 +48,7 @@ let makeColumns = (rows: map) => {
 
 let getSmallestCol = (columns: map) =>
   columns
-  ->Belt_MapString.map(Belt_Array.length)
+  ->Belt_MapString.map(Belt_SetString.size)
   ->Belt_MapString.reduce(None, (acc, curK, curV) =>
       acc->Belt_Option.isNone
         ? Some((curK, curV))
@@ -55,20 +60,23 @@ let getSmallestCol = (columns: map) =>
   ->Belt_Option.flatMap(((k, _)) => columns->Belt_MapString.get(k));
 
 let select = (rts: string, rows: map, columns: map) => {
-  let cols = rows->Belt_MapString.get(rts)->Belt_Option.getWithDefault([||]);
+  let cols =
+    rows->Belt_MapString.get(rts)->Belt_Option.getWithDefault(emptySet);
 
   let selected =
     cols
+    ->Belt_SetString.toArray
     ->Belt_Array.map(c =>
-        columns->Belt_MapString.get(c)->Belt_Option.getWithDefault([||])
+        columns
+        ->Belt_MapString.get(c)
+        ->Belt_Option.getWithDefault(emptySet)
+        ->Belt_SetString.toArray
       )
     ->flatten;
 
   columns
-  ->Belt_MapString.removeMany(cols)
-  ->Belt_MapString.map(row =>
-      row->Belt_Array.keep(c => !selected->includes(c))
-    );
+  ->Belt_MapString.removeMany(cols->Belt_SetString.toArray)
+  ->Belt_MapString.map(row => row->Belt_SetString.removeMany(selected));
 };
 
 let rec solveHelper =
@@ -84,7 +92,8 @@ let rec solveHelper =
     [|solution|];
   } else {
     getSmallestCol(columns)
-    ->Belt_Option.getWithDefault([||])
+    ->Belt_Option.getWithDefault(emptySet)
+    ->Belt_SetString.toArray
     ->Belt_Array.map(r =>
         solveHelper(
           rows,

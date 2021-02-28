@@ -16,13 +16,16 @@ describe("solver", () => {
       ("D", [|"3", "5", "6"|]),
       ("E", [|"2", "3", "6", "7"|]),
       ("F", [|"2", "7"|]),
-    |]);
+    |])
+    ->Belt_MapString.map(Belt_SetString.fromArray);
 
   let x = makeColumns(y);
 
   Expect.(
     test("make x", () => {
-      expect(x->Belt_MapString.toArray)
+      expect(
+        x->Belt_MapString.map(Belt_SetString.toArray)->Belt_MapString.toArray,
+      )
       |> toEqual([|
            ("1", [|"A", "B"|]),
            ("2", [|"E", "F"|]),
@@ -37,7 +40,8 @@ describe("solver", () => {
 
   Expect.(
     test("get smallest col x", () => {
-      expect(x->getSmallestCol) |> toEqual(Some([|"A", "B"|]))
+      expect(x->getSmallestCol->Belt_Option.map(Belt_SetString.toArray))
+      |> toEqual(Some([|"A", "B"|]))
     })
   );
 
@@ -45,16 +49,22 @@ describe("solver", () => {
     test("get smallest col x1", () => {
       let x1 =
         [|("4", [|"A", "B", "C"|]), ("7", [|"A", "C", "E", "F"|])|]
-        ->Belt_MapString.fromArray;
+        ->Belt_MapString.fromArray
+        ->Belt_MapString.map(Belt_SetString.fromArray);
 
-      expect(x1->getSmallestCol) |> toEqual(Some([|"A", "B", "C"|]));
+      expect(x1->getSmallestCol->Belt_Option.map(Belt_SetString.toArray))
+      |> toEqual(Some([|"A", "B", "C"|]));
     })
   );
 
   Expect.(
     test("Select - newColumns", () => {
       let newColumns = select("A", y, x);
-      expect(newColumns->Belt_MapString.toArray)
+      expect(
+        newColumns
+        ->Belt_MapString.map(Belt_SetString.toArray)
+        ->Belt_MapString.toArray,
+      )
       |> toEqual([|
            ("2", [||]),
            ("3", [|"D"|]),
@@ -78,7 +88,8 @@ describe("solver", () => {
           ("D", [|"3", "4"|]),
           ("E", [|"2"|]),
           ("F", [|"3"|]),
-        |]);
+        |])
+        ->Belt_MapString.map(Belt_SetString.fromArray);
       expect(solve(rows, makeColumns(rows)))
       |> toEqual([|[|"A", "D", "E"|], [|"C", "B"|], [|"C", "E", "F"|]|]);
     })
@@ -105,7 +116,8 @@ describe("solver", () => {
               )
           })
         ->flatten
-        ->Belt_MapString.fromArray;
+        ->Belt_MapString.fromArray
+        ->Belt_MapString.map(Belt_SetString.fromArray);
       let columns = makeColumns(rows);
       expect(solve(rows, columns)->length) |> toEqual(520); //65 if reflections are removed
     })
