@@ -4,9 +4,7 @@ open GridUtils;
 
 open Constants;
 
-type columns = Belt_MapInt.t(array(Belt_MapString.key));
-
-type rows = Belt_MapString.t(array(int));
+type map = Belt_MapString.t(array(string));
 
 module IntCmp =
   Belt.Id.MakeComparable({
@@ -20,13 +18,13 @@ module StrCmp =
     let cmp = Pervasives.compare;
   });
 
-let makeColumns = (rows: rows) => {
+let makeColumns = (rows: map) => {
   let keys = rows->Belt_MapString.keysToArray;
   let values =
     rows
     ->Belt_MapString.valuesToArray
     ->flatten
-    ->Belt_Set.fromArray(~id=(module IntCmp))
+    ->Belt_Set.fromArray(~id=(module StrCmp))
     ->Belt_Set.toArray;
   values
   ->Belt_Array.map(v =>
@@ -40,13 +38,13 @@ let makeColumns = (rows: rows) => {
         ),
       )
     )
-  ->Belt_MapInt.fromArray;
+  ->Belt_MapString.fromArray;
 };
 
-let getSmallestCol = (columns: columns) =>
+let getSmallestCol = (columns: map) =>
   columns
-  ->Belt_MapInt.map(Belt_Array.length)
-  ->Belt_MapInt.reduce(None, (acc, curK, curV) =>
+  ->Belt_MapString.map(Belt_Array.length)
+  ->Belt_MapString.reduce(None, (acc, curK, curV) =>
       acc->Belt_Option.isNone
         ? Some((curK, curV))
         : acc->Belt_Option.map(v => {
@@ -54,28 +52,30 @@ let getSmallestCol = (columns: columns) =>
             curV < accV ? (curK, curV) : v;
           })
     )
-  ->Belt_Option.flatMap(((k, _)) => columns->Belt_MapInt.get(k));
+  ->Belt_Option.flatMap(((k, _)) => columns->Belt_MapString.get(k));
 
-let select = (rts: string, rows: rows, columns: columns) => {
+let select = (rts: string, rows: map, columns: map) => {
   let cols = rows->Belt_MapString.get(rts)->Belt_Option.getWithDefault([||]);
 
   let selected =
     cols
     ->Belt_Array.map(c =>
-        columns->Belt_MapInt.get(c)->Belt_Option.getWithDefault([||])
+        columns->Belt_MapString.get(c)->Belt_Option.getWithDefault([||])
       )
     ->flatten;
 
   columns
-  ->Belt_MapInt.removeMany(cols)
-  ->Belt_MapInt.map(row => row->Belt_Array.keep(c => !selected->includes(c)));
+  ->Belt_MapString.removeMany(cols)
+  ->Belt_MapString.map(row =>
+      row->Belt_Array.keep(c => !selected->includes(c))
+    );
 };
 
 let rec solveHelper =
-        (rows: rows, columns: columns, solution: array(string))
+        (rows: map, columns: map, solution: array(string))
         : array(array(string)) =>
   // Js.log(columns->Belt_MapInt.toArray);
-  if (columns->Belt_MapInt.size === 0) {
+  if (columns->Belt_MapString.size === 0) {
     Js.log("solution");
     Js.log(solution);
 
@@ -95,5 +95,4 @@ let rec solveHelper =
     ->flatten;
   };
 
-let solve = (rows: rows, columns: columns) =>
-  solveHelper(rows, columns, [||]);
+let solve = (rows: map, columns: map) => solveHelper(rows, columns, [||]);
