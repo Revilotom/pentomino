@@ -105,7 +105,7 @@ describe("solver", () => {
       let columns = makeColumns(rows);
       // expect(rows->Belt_MapString.valuesToArray) |> toEqual([||]);
       // expect(columns->Belt_MapInt.keysToArray) |> toEqual([||]);
-      expect(solve(rows, columns)) |> toEqual([||]);
+      expect(solve(rows, columns)->length) |> toEqual(520); //65 if reflections are removed
     })
   );
 });

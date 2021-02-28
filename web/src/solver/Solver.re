@@ -71,24 +71,27 @@ let select = (rts: string, rows: rows, columns: columns) => {
   ->Belt_MapInt.map(row => row->Belt_Array.keep(c => !selected->includes(c)));
 };
 
-let rec solveHelper = (rows: rows, columns: columns, solution: array(string)) =>
+let rec solveHelper =
+        (rows: rows, columns: columns, solution: array(string))
+        : array(array(string)) =>
   // Js.log(columns->Belt_MapInt.toArray);
   if (columns->Belt_MapInt.size === 0) {
     Js.log("solution");
     Js.log(solution);
 
-    raise(Not_found);
+    // raise(Not_found);
 
-    solution;
+    [|solution|];
   } else {
-    let smallestCol =
-      getSmallestCol(columns)->Belt_Option.getWithDefault([||]);
-    smallestCol
-    ->Belt_Array.map(r => {
-        let newSolution = solution->Belt_Array.concat([|r|]);
-        let newColumns = select(r, rows, columns);
-        solveHelper(rows, newColumns, newSolution);
-      })
+    getSmallestCol(columns)
+    ->Belt_Option.getWithDefault([||])
+    ->Belt_Array.map(r =>
+        solveHelper(
+          rows,
+          select(r, rows, columns),
+          solution->Belt_Array.concat([|r|]),
+        )
+      )
     ->flatten;
   };
 
