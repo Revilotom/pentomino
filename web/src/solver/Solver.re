@@ -79,6 +79,44 @@ let select = (rts: string, rows: map, columns: map) => {
   ->Belt_MapString.map(row => row->Belt_SetString.removeMany(selected));
 };
 
+let prettifySolution = (res: array(string)) => {
+  let map =
+    res
+    ->Belt_Array.map(str => {
+        let splitted = str |> String.split_on_char('-');
+        let (letter, cells) =
+          switch (splitted) {
+          | [] => ("A", [])
+          | [letter, ...cells] => (letter, cells)
+          };
+        let list =
+          cells->Belt_List.map(cell => (cell->int_of_string, letter));
+        list->Belt_List.toArray;
+      })
+    ->flatten
+    ->Belt_MapInt.fromArray;
+
+  let chars =
+    Belt_Array.make(64, "")
+    ->Belt_Array.mapWithIndex((i, _) =>
+        map->Belt_MapInt.getWithDefault(i, "*")
+      );
+
+  [|
+    Belt_Array.slice(chars, ~offset=0, ~len=8),
+    Belt_Array.slice(chars, ~offset=8, ~len=8),
+    Belt_Array.slice(chars, ~offset=16, ~len=8),
+    Belt_Array.slice(chars, ~offset=24, ~len=8),
+    Belt_Array.slice(chars, ~offset=32, ~len=8),
+    Belt_Array.slice(chars, ~offset=40, ~len=8),
+    Belt_Array.slice(chars, ~offset=48, ~len=8),
+    Belt_Array.slice(chars, ~offset=56, ~len=8),
+    Belt_Array.slice(chars, ~offset=64, ~len=8),
+  |]
+  ->Belt_Array.map(arr => arr->Belt_Array.joinWith("", x => x))
+  ->Belt_Array.joinWith("\n", x => x);
+};
+
 let rec solveHelper =
         (rows: map, columns: map, solution: array(string))
         : array(array(string)) =>
@@ -86,6 +124,7 @@ let rec solveHelper =
   if (columns->Belt_MapString.size === 0) {
     Js.log("solution");
     Js.log(solution);
+    Js.log(prettifySolution(solution));
 
     // raise(Not_found);
 
